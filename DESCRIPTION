@@ -1,0 +1,12 @@
+Package: FinancialModelingR
+Type: Package
+Title: This package performs exploratory analysis of daily open, close, high and low against daily, weekly and monthly data sets
+Version: 1.0
+Date: 2019-12-31
+Author: Xuanyang Cai, Yong Chen, Do Hyun Hwang, Naveen Mathew Nathan Sathiyanathan
+Maintainer: Xuanyang Cai <>, Yong Chen <>, Do Hyun Hwang <>, Naveen Mathew Nathan Sathiyanathan <naveenmathewnathan.s@gmail.com>
+Description: More details about what the package does. See<http://cran.r-project.org/doc/manuals/r-release/R-exts.html#The-DESCRIPTION-file> fordetails on how to write this part.
+License: GPL (>= 2)
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.0.2
