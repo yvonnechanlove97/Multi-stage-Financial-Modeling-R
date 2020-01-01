@@ -1,6 +1,6 @@
 #' @title Read Price from Excel File
 #' @description Reads an Excel file with Date, Open, High, Low and Close prices of a stock or future contract
-#' 
+#'
 #' @param file Path to a Excel file with Date, Open, High, Low and Close prices
 #' @param delta_price Flag indicating whether change in price should be calculated
 #' @param subset Flag indicating whether only a subset of the data should be used
@@ -10,6 +10,7 @@
 #' @examples
 #' price_df <- read_price(in_file, delta_price = F, subset = F, skip_lines = 3)
 #' delta_price_df <- read_price(in_file, delta_price = F, subset = F, skip_lines = 3)
+#' @export
 read_price <- function(in_file, delta_price = F, add_delta = F, subset = F,
                        start_date = "2017-01-01", skip_lines = 3,
                        rename_price_columns = F, rename_prefix = NULL) {
@@ -22,7 +23,7 @@ read_price <- function(in_file, delta_price = F, add_delta = F, subset = F,
       prices$delta_Close <- c(NA, diff(prices$Close))
       prices$delta_High <- c(NA, diff(prices$High))
       prices$delta_Low <- c(NA, diff(prices$Low))
-      
+
       prices$delta_Open_sign <- sign(prices$delta_Open)
       prices$delta_Close_sign <- sign(prices$delta_Close)
       prices$delta_High_sign <- sign(prices$delta_High)
@@ -73,9 +74,9 @@ get_residues <- function(df, prices, model) {
   prices <- merge(prices, pred_df, on.x = "Date1",
                   on.y = "Date", all.x = T)
   prices$Date1 <- prices$Date_cut <- NULL
-  
+
   prices$pred_Close <- backfill_na(prices$pred_Close)
-  
+
   prices$Close <- prices$Close - prices$pred_Close
   prices$pred_Close <- NULL
   return(prices)

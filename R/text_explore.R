@@ -1,6 +1,6 @@
 #' @title Correlation plot
 #' @description Generate correlation heatmap of given independent variable(s) and dependent variable(s) in a given data frame
-#' 
+#'
 #' @param independent_var_names Character vector specifying the independent variable names
 #' @param dependent_var_names Character vector specifying the dependent variable names
 #' @param remove_words Words to be removed that were not removed as stopwords
@@ -21,6 +21,7 @@
 #'                          colnames(df)[grep(colnames(df), pattern = "_Low$")],
 #'                          colnames(df)[grep(colnames(df), pattern = "_sign$")])
 #' create_corr_plot(independent_var_names, dependent_var_names, df)
+#' @export
 create_corr_plot = function(independent_var_names, dependent_var_names, df,
                             remove_words = c(
                               "amp", "get", "want", "many", "will", "just",
@@ -34,7 +35,7 @@ create_corr_plot = function(independent_var_names, dependent_var_names, df,
                               "march_delta_Close", "july_delta_Close_sign",
                               "may_delta_Close_sign", "march_delta_Close_sign")) {
   col <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))
-  
+
   independent_var <- independent_var_names
   independent_var <- setdiff(independent_var, remove_words)
   dependent_var = dependent_var_names
@@ -42,9 +43,9 @@ create_corr_plot = function(independent_var_names, dependent_var_names, df,
                  y = df[, dependent_var],
                  method = "pearson")
   corr_mat <- corr_mat[text_correlates, price_correlates]
-  
+
   return (corrplot(corr_mat,
-                   tl.cex = .6, 
+                   tl.cex = .6,
                    method = "color", hclust.method = "ward"))
-  
+
 }

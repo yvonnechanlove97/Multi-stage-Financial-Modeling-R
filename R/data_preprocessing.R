@@ -8,7 +8,7 @@
 
 #' @title Process Tweet Text
 #' @description Creates a data frame with Tweet summaries such as average polarity of sentences, minimum (most negative) polarity of sentences, maximum (most positive) polarity of sentences, standard deviation of polarity of sentences (returns 0 if ther number of sentences is 1) and useful text in the Tweet obtained by retaining nouns, adjectives and adverbs.
-#' 
+#'
 #' @param file Path to a csv file with Tweets
 #' @param processed Prefix of the processed Rds file
 #' @param csv_dir Base directory of CSV file
@@ -16,6 +16,7 @@
 #' @return A data frame with summary of polarity of text Tweets such as average polarity of sentences, minimum (most negative) polarity of sentences, maximum (most positive) polarity of sentences, standard deviation of polarity of sentences and useful text in the Tweet obtained by retaining nouns, adjectives and adverbs.
 #' @examples
 #' process_text(file = "", processed = "processed", csv_dir = "../Shane_s_lab/Data_Graduate/", stopwords_file = "../../Naveen_NLP/stopwords.txt")
+#' @export
 process_text <- function(file, processed = "processed",
                          csv_dir = "../Shane_s_lab/Data_Graduate/",
                          stopwords_file = "../../Naveen_NLP/stopwords.txt") {
@@ -26,9 +27,9 @@ process_text <- function(file, processed = "processed",
   if(!(paste0(processed, "_", file, ".Rds") %in% files)) {
     reviews <- data.frame(fread(file), stringsAsFactors = F)
     text_reviews <- as.character(reviews$text)
-    
+
     text_reviews <- tolower(text_reviews)
-    
+
     text_reviews <- clean_text(text_reviews)
     if(processed != "processed") {
       review_polarity <- sapply(1:length(text_reviews), function(i) {
