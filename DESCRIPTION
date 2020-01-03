@@ -13,4 +13,6 @@ Imports:
     ggplot2,
     scales,
     readxl
+Suggests: knitr, rmarkdown
+VignetteBuilder: knitr
 RoxygenNote: 7.0.2
