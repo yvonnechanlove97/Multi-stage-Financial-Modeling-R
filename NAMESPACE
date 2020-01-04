@@ -2,5 +2,6 @@
 
 export(create_corr_plot)
 export(crop_progress_group_diff)
+export(plt_pretty)
 export(process_text)
 export(read_price)

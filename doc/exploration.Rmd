@@ -2,31 +2,35 @@
 title: "Exploration"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Put the title of your vignette here}
+  %\VignetteIndexEntry{Exploration using FinancialModlingR package}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+# Initialization
+
+## Loading Crop Progress from FinancialModelingR
+
+```{r}
+library(FinancialModelingR)
+library(readxl)
+library(ggplot2)
+data("soybeanCropProgress2017")
+soybeanCropProgress2017$WEEK.ENDING <- as.Date(soybeanCropProgress2017$WEEK.ENDING, "%Y-%m-%d")
 ```
 
-## R Markdown
+## Loading Private Price Data
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+```{r}
+contractsForJuly2020 <- read_price(
+  in_file = "private_data/ActiveSoybeanContractsforJuly2020.xlsx", delta_price = T,
+  add_delta = T, subset = T, subset_min_date = "2017-01-01",
+  rename_price_columns = T, rename_prefix = "july_2020_", skip_lines = 3)
+contractsForJuly2020$Date <- as.Date(contractsForJuly2020$Date, "%Y-%m-%d")
 ```
 
-## Including Plots
+# Plotting
 
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r}
+plt_pretty(df1_progress = soybeanCropProgress2017, df2_contracts = contractsForJuly2020) + labs(title = "Crop_progress_17 vs March Contract price")
 ```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

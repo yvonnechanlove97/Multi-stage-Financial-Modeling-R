@@ -10,7 +10,7 @@ crop_progress_group_diff(df)
 \item{df}{Data frame containing raw crop progress data}
 }
 \value{
-Data fraome of diff
+Data frame of diff
 }
 \description{
 Computes row-wise diff for crop progress data
