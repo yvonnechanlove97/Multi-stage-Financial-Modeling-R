@@ -9,7 +9,7 @@ read_price(
   delta_price = F,
   add_delta = F,
   subset = F,
-  start_date = "2017-01-01",
+  subset_min_date = "2017-01-01",
   skip_lines = 3,
   rename_price_columns = F,
   rename_prefix = NULL
@@ -20,7 +20,7 @@ read_price(
 
 \item{subset}{Flag indicating whether only a subset of the data should be used}
 
-\item{start_date}{Character string indicating the minimum date to be included in subset after reading the price file}
+\item{subset_min_date}{Character string indicating the minimum date to be included in subset after reading the price file}
 
 \item{skip_lines}{Number of lines above the header line in the Excel file}
 

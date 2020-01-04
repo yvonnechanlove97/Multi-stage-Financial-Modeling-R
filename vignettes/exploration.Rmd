@@ -9,8 +9,19 @@ vignette: >
 
 # Initialization
 
+## Loading Crop Progress from FinancialModelingR
+
 ```{r}
 library(FinancialModelingR)
 data("soybeanCropProgress2017")
+soybeanCropProgress2017$WEEK.ENDING <- as.Date(soybeanCropProgress2017$WEEK.ENDING, "%Y-%m-%d")
 ```
 
+## Loading Private Price Data
+
+```{r}
+ContractsforJuly2020 <- read_price(
+  in_file = "private_data/ActiveSoybeanContractsforJuly2020.xlsx",
+  add_delta = T, subset = T, subset_min_date = "2017-01-01",
+  rename_price_columns = T, rename_prefix = "july_2020", skip_lines = 3)
+```

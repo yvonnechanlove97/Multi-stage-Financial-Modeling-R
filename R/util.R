@@ -4,7 +4,7 @@
 #' @param file Path to a Excel file with Date, Open, High, Low and Close prices
 #' @param delta_price Flag indicating whether change in price should be calculated
 #' @param subset Flag indicating whether only a subset of the data should be used
-#' @param start_date Character string indicating the minimum date to be included in subset after reading the price file
+#' @param subset_min_date Character string indicating the minimum date to be included in subset after reading the price file
 #' @param skip_lines Number of lines above the header line in the Excel file
 #' @return The sum of \code{x} and \code{y}.
 #' @examples
@@ -12,7 +12,7 @@
 #' delta_price_df <- read_price(in_file, delta_price = F, subset = F, skip_lines = 3)
 #' @export
 read_price <- function(in_file, delta_price = F, add_delta = F, subset = F,
-                       start_date = "2017-01-01", skip_lines = 3,
+                       subset_min_date = "2017-01-01", skip_lines = 3,
                        rename_price_columns = F, rename_prefix = NULL) {
   prices <- data.frame(read_excel(in_file, skip = skip_lines))
   prices$Date <- as.Date(prices$Date, format = "%Y-%m-%d")
@@ -36,7 +36,7 @@ read_price <- function(in_file, delta_price = F, add_delta = F, subset = F,
     }
   }
   if(subset) {
-    prices <- prices[prices$Date >= as.Date(start_date, format = "%Y-%m-%d"), ]
+    prices <- prices[prices$Date >= as.Date(subset_min_date, format = "%Y-%m-%d"), ]
   }
   if(rename_price_columns) {
     colnames(prices)[2:ncol(prices)] <-
