@@ -1,15 +1,16 @@
 #' @title Combine monthly data and daily data and return monthly data
 #' @description Calculate the average price of from the day after the monthly observation day to day before next monthly observation day
 #'
-#' @param daily_data the dataframe containing daily data with Date as the first column
-#' @param monthly_data the dataframe containing monthly data with Date as the first column
+#' @param wasde Data frame containing wasde data
+#' @param daily_data Data frame containing daily data
+#' @param monthly_data Data frame containing monthly data
 #' @param date_col1 Name of the date column in daily data
 #' @param date_col2 Name of date column in monthly data
 #' @return Data frame of the combined final monthly data
 #' @examples
-#' finaldata=monthly_trans(daily_data,monthly_data)
+#' finaldata=monthly_trans(wasde, daily_data, monthly_data)
 #' @export
-monthly_trans <- function(daily_data,monthly_data, date_col1 = 'Date', date_col2 = 'Date'){
+monthly_trans <- function(wasde, daily_data, monthly_data, date_col1 = 'Date', date_col2 = 'Date'){
   m=merge(x = daily_data,y = monthly_data,by.x = date_col1, by.y = date_col2, all.x = T)
   #create index and group variables
 
@@ -20,12 +21,14 @@ monthly_trans <- function(daily_data,monthly_data, date_col1 = 'Date', date_col2
     if(m$index[i] !=1) {
       m$group[i]=m$group[i-1]+1
     }
-    else {m$group[i]=m$group[i-1]}
+    else {
+      m$group[i]=m$group[i-1]
+    }
   }
 
   #summarise
   #monthly average data
-  avg_m=m%>%group_by(group)%>%summarise_at(vars(colnames(daily_data)),mean)
+  avg_m = m %>% dplyr::group_by(group)%>% dplyr::summarise_at(vars(colnames(daily_data)), mean)
   final=cbind(avg_m[-1,-1],merge(daily_data,monthly_data,by='Date'))
   final=wasde[,-c(length(avg_m):(length(avg_m)+length(daily_data))-1)]
   fianl$Date=as_date(final$Date,tz = NULL)
