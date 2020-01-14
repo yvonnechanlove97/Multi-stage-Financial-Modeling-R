@@ -7,15 +7,15 @@
 #' @examples
 #' finaldata=monthly_trans(daily_data,monthly_data)
 #' @export
-monthly_trans=function(daily_data,monthly_data){
-  m=dplyr::left_join(daily_data,monthly_data,by='Date')
+monthly_trans <- function(daily_data,monthly_data, common_col = 'Date'){
+  m=dplyr::left_join(daily_data,monthly_data,by=common_col)
   #create index and group variables
 
   m$index=ifelse(apply(!is.na(m[,-c(1:length(daily_data))]),1, any),1,0)
   m$group=NA
   m$group[1]=0
   for (i in 2:dim(m)[1]) {
-    if ngt(m$index[i]==1){
+    if(m$index[i] !=1) {
       m$group[i]=m$group[i-1]+1
     }
     else {m$group[i]=m$group[i-1]}
