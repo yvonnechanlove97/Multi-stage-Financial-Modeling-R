@@ -6,6 +6,8 @@
 #' @examples
 #' data=read_wasde(path="C:/Users/40463/OneDrive/Documents/2019 Fall/Minne/WASDE")
 #' @export
+
+# Example should be changed as it is for read_wasde
 clean_wasde=function(com_data){
   #remove hifen
   test=grepl("-",as.matrix(com_data[,-1]))
