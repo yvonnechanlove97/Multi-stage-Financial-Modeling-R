@@ -3,12 +3,14 @@
 #'
 #' @param daily_data the dataframe containing daily data with Date as the first column
 #' @param monthly_data the dataframe containing monthly data with Date as the first column
+#' @param date_col1 Name of the date column in daily data
+#' @param date_col2 Name of date column in monthly data
 #' @return Data frame of the combined final monthly data
 #' @examples
 #' finaldata=monthly_trans(daily_data,monthly_data)
 #' @export
-monthly_trans <- function(daily_data,monthly_data, common_col = 'Date'){
-  m=dplyr::left_join(daily_data,monthly_data,by=common_col)
+monthly_trans <- function(daily_data,monthly_data, date_col1 = 'Date', date_col2 = 'Date'){
+  m=merge(x = daily_data,y = monthly_data,by.x = date_col1, by.y = date_col2, all.x = T)
   #create index and group variables
 
   m$index=ifelse(apply(!is.na(m[,-c(1:length(daily_data))]),1, any),1,0)
