@@ -4,24 +4,12 @@
 \alias{monthly_trans}
 \title{Combine monthly data and daily data and return monthly data}
 \usage{
-monthly_trans(
-  wasde,
-  daily_data,
-  monthly_data,
-  date_col1 = "Date",
-  date_col2 = "Date"
-)
+monthly_trans(daily_data, monthly_data)
 }
 \arguments{
-\item{wasde}{Data frame containing wasde data}
+\item{daily_data}{the dataframe containing daily data with Date as the first column}
 
-\item{daily_data}{Data frame containing daily data}
-
-\item{monthly_data}{Data frame containing monthly data}
-
-\item{date_col1}{Name of the date column in daily data}
-
-\item{date_col2}{Name of date column in monthly data}
+\item{monthly_data}{the dataframe containing monthly data with Date as the first column}
 }
 \value{
 Data frame of the combined final monthly data
@@ -30,5 +18,5 @@ Data frame of the combined final monthly data
 Calculate the average price of from the day after the monthly observation day to day before next monthly observation day
 }
 \examples{
-finaldata=monthly_trans(wasde, daily_data, monthly_data)
+finaldata=monthly_trans(daily_data,monthly_data)
 }
