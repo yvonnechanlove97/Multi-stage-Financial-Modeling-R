@@ -30,7 +30,7 @@ monthly_trans <- function(wasde, daily_data, monthly_data, date_col1 = 'Date', d
   #monthly average data
   avg_m = m %>% dplyr::group_by(group)%>% dplyr::summarise_at(vars(colnames(daily_data)), mean)
   final=cbind(avg_m[-1,-1],merge(daily_data,monthly_data,by='Date'))
-  final=wasde[,-c(length(avg_m):(length(avg_m)+length(daily_data))-1)]
+  final=final[,-c(length(avg_m):(length(avg_m)+length(daily_data))-1)]
   fianl$Date=as_date(final$Date,tz = NULL)
   final=final%>%arrange(Date)%>% select(Date,everything())
   return(final)
