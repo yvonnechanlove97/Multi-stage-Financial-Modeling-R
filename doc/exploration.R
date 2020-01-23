@@ -41,3 +41,8 @@ corr_mat_weekly <- create_export_corr_plot(
   selected_countries = selected_countries,
   df = df_top_export, top_corr = 4)
 
+## -----------------------------------------------------------------------------
+data("soybeanWASDE")
+soybeanWASDE_clean <- clean_wasde(combined_data = soybeanWASDE)
+plot_monthly_data(soybeanWASDE_clean)
+

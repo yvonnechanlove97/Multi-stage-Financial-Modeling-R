@@ -44,7 +44,7 @@ read_wasde <- function(path, sheet_name = "Page 15", col_range = "A13:A58",
 #' @export
 
 # Example should be changed as it is for read_wasde
-clean_wasde=function(combined_data){
+clean_wasde <- function(combined_data){
   #remove hyphen
   test=grepl("-",as.matrix(combined_data[,-1]))
   test=matrix(test,dim(combined_data))
