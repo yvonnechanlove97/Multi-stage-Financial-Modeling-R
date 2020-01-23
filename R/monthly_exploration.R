@@ -32,8 +32,7 @@ plot_monthly_data <- function(df, date_col_index = 1,
           type = c("b"), pch = 1,
           col = color, main = main,
           xlab = xlab, ylab = ylab, xaxt = "n") #plot
-  axis(1, df[, date_col_index],
-       format(df[, date_col_index], "%m-%d-%y"),
+  axis(1, df[, 1], format(df[, 1], "%m-%d-%y"),
        cex.axis = .56, las = 2)
   legend("bottomleft", legend = colnames(df)[other_cols_index],
          col = color, pch = 1, cex = 0.6, bty = "n", inset = c(0.01, 0.01),
