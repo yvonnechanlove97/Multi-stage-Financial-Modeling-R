@@ -1,8 +1,17 @@
-#' @title Progress - Price Plot
-#' @description Plots the multiple weekly data series vs daily price series. Prices are considered n days before and n days after the end date of each week
+#' @title Weekly Series vs Price Plot
+#' @description Plots the multiple weekly data series vs daily price series. Prices are considered n days before and n days after the end date of each week. Line color corresponds to the type of weekly series and line type corresponds to the type of variable.
 #'
-#' @param df1_progress Data frame containing progress
+#' @param df1_progress Data frame containing weekly series
 #' @param df2_contracts Data frame containing close prices
+#' @param week_ending_col Column name in `df1_progress` that contains the end of week for each data point
+#' @param n Number of days to lead and lag around week ending. Prices are compared between `week_end + n` and `week_end - n`
+#' @param line_columns Columns in `df1_progress` containing required weekly series to plot, corresponds to the exhaustive list of different types of series and variables among each series
+#' @param line_colors Color sequence (strings) corresponding to the line_columns
+#' @param color_mapping Mapping from string sequence of line colors (series type) to string sequence of predefined colors in R
+#' @param line_type Line type sequence (strings) corresponding to each line added using line_columns
+#' @param color_variable_name Proxy for each type of weekly series used in plotting - appears in legend
+#' @param variable_name Proxy for each type of variable user in plotting - appears in legend
+#' @param variable_mapping Line type mapping for different types of variables
 #' @return ggplot object with plots comparing price against progress over current year, previous year and 5 year average
 #' @examples
 #' contractsForJuly2020 <- read_price(
@@ -40,6 +49,10 @@ plot_price_vs_weekly_series <- function(df1_progress, df2_contracts,
                                           "Dropping Leaves", "Dropping Leaves",
                                           "Dropping Leaves", "Harvested", "Harvested",
                                           "Harvested"),
+                                        color_mapping = c(
+                                          "Planted" = "brown", "Emerged" = "darkgreen",
+                                          "Blooming" = "green", "Setting Pods" = "gold",
+                                          "Dropping Leaves" = "red", "Harvested" = "purple"),
                                         line_type = c("Current Year", "5 Years Average",
                                                       "Previous Year", "Current Year",
                                                       "5 Years Average", "Previous Year",
@@ -50,10 +63,6 @@ plot_price_vs_weekly_series <- function(df1_progress, df2_contracts,
                                                       "Previous Year", "Current Year",
                                                       "5 Years Average", "Previous Year"),
                                         color_variable_name = "Stage",
-                                        color_mapping = c(
-                                          "Planted" = "brown", "Emerged" = "darkgreen",
-                                          "Blooming" = "green", "Setting Pods" = "gold",
-                                          "Dropping Leaves" = "red", "Harvested" = "purple"),
                                         variable_name = "Variable",
                                         variable_mapping = c("Current Year" = 1,
                                                              "5 Years Average" = 2,
