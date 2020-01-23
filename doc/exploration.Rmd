@@ -15,7 +15,9 @@ vignette: >
 library(FinancialModelingR)
 library(readxl)
 library(ggplot2)
-data("soybeanCropProgressUSA2017")
+library(dplyr)
+library(corrplot)
+data("soybeanCropProgressUSA2017", package = "FinancialModelingR")
 soybeanCropProgress2017$WEEK.ENDING <-
   as.Date(soybeanCropProgress2017$WEEK.ENDING, "%Y-%m-%d")
 ```
@@ -33,8 +35,33 @@ print(head(contractsForJuly2020))
 
 # Plotting
 
+## Weekly Soybean Crop Progress vs Soybean July 2020 Contract Price
+
 ```{r}
 plot_price_vs_weekly_series(df1_progress = soybeanCropProgress2017,
                             df2_contracts = contractsForJuly2020) +
   labs(title = "Crop_progress_17 vs March Contract price")
+```
+
+## Weekly Soybean Exports vs Soybean July 2020 Contract Price
+
+```{r}
+data("soybeanExports", package = "FinancialModelingR")
+competitors <- c("ARGENTINA", "BRAZIL")
+df_total_export <- soybeanExports %>% group_by(Country) %>%
+  summarize(Total_Export = sum(Weekly_Exports, na.rm = T))
+top_countries <- head(x = df_total_export$Country[
+  order(df_total_export$Total_Export, decreasing = TRUE)], n = 10)
+selected_countries <- c(competitors, top_countries)
+df_top_export <- soybeanExports[sapply(
+  soybeanExports$Country, function(country) country %in% selected_countries), ]
+df_top_export <- inner_join(contractsForJuly2020, df_top_export, by = "Date")
+ind_col <- c("Weekly_Exports", "CMY_Outstanding_Sales", "CMY_Gross_New_Sales",
+             "CMY_Net_Sales" ,"CMY_Total_Commitment")
+corr_mat_weekly <- create_export_corr_plot(
+  independent_var_names = ind_col,
+  dependent_var_names = colnames(df_top_export)[
+    grep("Close",colnames(df_top_export))],
+  selected_countries = selected_countries,
+  df = df_top_export, top_corr = 4)
 ```
