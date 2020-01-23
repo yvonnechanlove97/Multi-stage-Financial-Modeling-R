@@ -11,7 +11,7 @@
 #' @export
 read_wasde=function(path, sheet_name = "Page 15", col_range = "A13:A58",
                     remove_slice = c(3, 5, 17:21, 33:37)){
-  file_list <- list.files(path)
+  file_list <- list.files(path, full.names = T)
   data=data.frame()
   com_data=readxl::read_xls(path = file_list[1], sheet = sheet_name, range=col_range,col_names = 'SOYBEANS')
   if(!is.null(remove_slice)) {
