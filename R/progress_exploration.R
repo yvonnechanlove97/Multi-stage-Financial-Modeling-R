@@ -3,6 +3,7 @@
 #'
 #' @param df1_progress Data frame containing weekly series
 #' @param df2_contracts Data frame containing close prices
+#' @param series_type Label for type of weekly series - appears as y-axis label in plot
 #' @param week_ending_col Column name in `df1_progress` that contains the end of week for each data point
 #' @param n Number of days to lead and lag around week ending. Prices are compared between `week_end + n` and `week_end - n`
 #' @param line_columns Columns in `df1_progress` containing required weekly series to plot, corresponds to the exhaustive list of different types of series and variables among each series
@@ -22,6 +23,7 @@
 #' @export
 plot_price_vs_weekly_series <- function(df1_progress, df2_contracts,
                                         week_ending_col = "WEEK.ENDING", n = 2,
+                                        series_type = "Crop Progress in percentage",
                                         line_columns = c(
                                           "PROGRESS.in.PCT.PLANTED",
                                           "PROGRESS..5.YEAR.AVG.in.PCT.PLANTED",
@@ -99,7 +101,7 @@ plot_price_vs_weekly_series <- function(df1_progress, df2_contracts,
     geom_line(data = tmp2,aes(
       x = Date, y = (Close - min(tmp2$Close)) * 100/gap2, alpha = 'After')) +
     scale_x_date(name = "Time", date_breaks = "2 weeks", date_labels = "%m-%d") +
-    scale_y_continuous("Crop Progress in percentage",
+    scale_y_continuous(series_type,
                        sec.axis = sec_axis(~ (. * gap1 /100) + min(tmp1$Close),
                                            breaks = function(x) pretty(x, n=10),
                                            name = "Price")) +

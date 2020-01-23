@@ -9,6 +9,7 @@ plot_price_vs_weekly_series(
   df2_contracts,
   week_ending_col = "WEEK.ENDING",
   n = 2,
+  series_type = "Crop Progress in percentage",
   line_columns = c("PROGRESS.in.PCT.PLANTED", "PROGRESS..5.YEAR.AVG.in.PCT.PLANTED",
     "PROGRESS..PREVIOUS.YEAR.in.PCT.PLANTED", "PROGRESS.in.PCT.EMERGED",
     "PROGRESS..5.YEAR.AVG.in.PCT.EMERGED", "PROGRESS..PREVIOUS.YEAR.in.PCT.EMERGED",
@@ -43,6 +44,8 @@ plot_price_vs_weekly_series(
 \item{week_ending_col}{Column name in `df1_progress` that contains the end of week for each data point}
 
 \item{n}{Number of days to lead and lag around week ending. Prices are compared between `week_end + n` and `week_end - n`}
+
+\item{series_type}{Label for type of weekly series - appears as y-axis label in plot}
 
 \item{line_columns}{Columns in `df1_progress` containing required weekly series to plot, corresponds to the exhaustive list of different types of series and variables among each series}
 
