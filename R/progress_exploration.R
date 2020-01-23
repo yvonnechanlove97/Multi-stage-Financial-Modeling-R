@@ -1,5 +1,5 @@
 #' @title Progress - Price Plot
-#' @description Plots the weekly progress (in percentage) vs price series. Prices are considered 2 days before and 2 days after the end date of each week
+#' @description Plots the multiple weekly data series vs daily price series. Prices are considered n days before and n days after the end date of each week
 #'
 #' @param df1_progress Data frame containing progress
 #' @param df2_contracts Data frame containing close prices
@@ -11,51 +11,53 @@
 #' rename_price_columns = T, rename_prefix = "july_2020_", skip_lines = 3)
 #' plt_pretty(df1_progress = soybeanCropProgress2017, df2_contracts = contractsForJuly2020)
 #' @export
-plt_pretty <- function(df1_progress, df2_contracts,
-                       week_ending_col = "WEEK.ENDING", n = 2,
-                       line_columns = c(
-                         "PROGRESS.in.PCT.PLANTED",
-                         "PROGRESS..5.YEAR.AVG.in.PCT.PLANTED",
-                         "PROGRESS..PREVIOUS.YEAR.in.PCT.PLANTED",
-                         "PROGRESS.in.PCT.EMERGED",
-                         "PROGRESS..5.YEAR.AVG.in.PCT.EMERGED",
-                         "PROGRESS..PREVIOUS.YEAR.in.PCT.EMERGED",
-                         "PROGRESS.in.PCT.BLOOMING",
-                         "PROGRESS..5.YEAR.AVG.in.PCT.BLOOMING",
-                         "PROGRESS..PREVIOUS.YEAR.in.PCT.BLOOMING",
-                         "PROGRESS.in.PCT.SETTING.PODS",
-                         "PROGRESS..5.YEAR.AVG.in.PCT.SETTING.PODS",
-                         "PROGRESS..PREVIOUS.YEAR.in.PCT.SETTING.PODS",
-                         "PROGRESS.in.PCT.DROPPING.LEAVES",
-                         "PROGRESS..5.YEAR.AVG.in.PCT.DROPPING.LEAVES",
-                         "PROGRESS..PREVIOUS.YEAR.in.PCT.DROPPING.LEAVES",
-                         "PROGRESS.in.PCT.HARVESTED",
-                         "PROGRESS..5.YEAR.AVG.in.PCT.HARVESTED",
-                         "PROGRESS..PREVIOUS.YEAR.in.PCT.HARVESTED"),
-                       line_colors = c(
-                         "Planted", "Planted", "Planted", "Emerged",
-                         "Emerged", "Emerged", "Blooming",
-                         "Blooming", "Blooming", "Setting Pods",
-                         "Setting Pods", "Setting Pods",
-                         "Dropping Leaves", "Dropping Leaves",
-                         "Dropping Leaves", "Harvested", "Harvested",
-                         "Harvested"),
-                       line_type = c("Current Year", "5 Years Average",
-                                     "Previous Year", "Current Year",
-                                     "5 Years Average", "Previous Year",
-                                     "Current Year", "5 Years Average",
-                                     "Previous Year", "Current Year",
-                                     "5 Years Average", "Previous Year",
-                                     "Current Year", "5 Years Average",
-                                     "Previous Year", "Current Year",
-                                     "5 Years Average", "Previous Year"),
-                       color_mapping = c(
-                         "Planted" = "brown", "Emerged" = "darkgreen",
-                         "Blooming" = "green", "Setting Pods" = "gold",
-                         "Dropping Leaves" = "red", "Harvested" = "purple"),
-                       variable_mapping = c("Current Year" = 1,
-                                            "5 Years Average" = 2,
-                                            "Previous Year" = 3)) {
+plot_price_vs_weekly_series <- function(df1_progress, df2_contracts,
+                                        week_ending_col = "WEEK.ENDING", n = 2,
+                                        line_columns = c(
+                                          "PROGRESS.in.PCT.PLANTED",
+                                          "PROGRESS..5.YEAR.AVG.in.PCT.PLANTED",
+                                          "PROGRESS..PREVIOUS.YEAR.in.PCT.PLANTED",
+                                          "PROGRESS.in.PCT.EMERGED",
+                                          "PROGRESS..5.YEAR.AVG.in.PCT.EMERGED",
+                                          "PROGRESS..PREVIOUS.YEAR.in.PCT.EMERGED",
+                                          "PROGRESS.in.PCT.BLOOMING",
+                                          "PROGRESS..5.YEAR.AVG.in.PCT.BLOOMING",
+                                          "PROGRESS..PREVIOUS.YEAR.in.PCT.BLOOMING",
+                                          "PROGRESS.in.PCT.SETTING.PODS",
+                                          "PROGRESS..5.YEAR.AVG.in.PCT.SETTING.PODS",
+                                          "PROGRESS..PREVIOUS.YEAR.in.PCT.SETTING.PODS",
+                                          "PROGRESS.in.PCT.DROPPING.LEAVES",
+                                          "PROGRESS..5.YEAR.AVG.in.PCT.DROPPING.LEAVES",
+                                          "PROGRESS..PREVIOUS.YEAR.in.PCT.DROPPING.LEAVES",
+                                          "PROGRESS.in.PCT.HARVESTED",
+                                          "PROGRESS..5.YEAR.AVG.in.PCT.HARVESTED",
+                                          "PROGRESS..PREVIOUS.YEAR.in.PCT.HARVESTED"),
+                                        line_colors = c(
+                                          "Planted", "Planted", "Planted", "Emerged",
+                                          "Emerged", "Emerged", "Blooming",
+                                          "Blooming", "Blooming", "Setting Pods",
+                                          "Setting Pods", "Setting Pods",
+                                          "Dropping Leaves", "Dropping Leaves",
+                                          "Dropping Leaves", "Harvested", "Harvested",
+                                          "Harvested"),
+                                        line_type = c("Current Year", "5 Years Average",
+                                                      "Previous Year", "Current Year",
+                                                      "5 Years Average", "Previous Year",
+                                                      "Current Year", "5 Years Average",
+                                                      "Previous Year", "Current Year",
+                                                      "5 Years Average", "Previous Year",
+                                                      "Current Year", "5 Years Average",
+                                                      "Previous Year", "Current Year",
+                                                      "5 Years Average", "Previous Year"),
+                                        color_variable_name = "Stage",
+                                        color_mapping = c(
+                                          "Planted" = "brown", "Emerged" = "darkgreen",
+                                          "Blooming" = "green", "Setting Pods" = "gold",
+                                          "Dropping Leaves" = "red", "Harvested" = "purple"),
+                                        variable_name = "Variable",
+                                        variable_mapping = c("Current Year" = 1,
+                                                             "5 Years Average" = 2,
+                                                             "Previous Year" = 3)) {
   # Close prices of last business day and the following business day
   date_1 <- df1_progress[, week_ending_col] - n
   date_2 <- df1_progress[, week_ending_col] + n
@@ -103,7 +105,7 @@ plt_pretty <- function(df1_progress, df2_contracts,
                            ))
   }
   plt <- plt +
-    scale_color_manual("Stage", values = uniq_colors) +
-    scale_linetype_manual("Variable", values = variable_mapping)
+    scale_color_manual(color_variable_name, values = uniq_colors) +
+    scale_linetype_manual(variable_name, values = variable_mapping)
   return(plt)
 }

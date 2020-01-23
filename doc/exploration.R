@@ -15,7 +15,7 @@ contractsForJuly2020$Date <- as.Date(contractsForJuly2020$Date, "%Y-%m-%d")
 print(head(contractsForJuly2020))
 
 ## -----------------------------------------------------------------------------
-plt_pretty(df1_progress = soybeanCropProgress2017,
-           df2_contracts = contractsForJuly2020) +
+plot_price_vs_weekly_series(df1_progress = soybeanCropProgress2017,
+                            df2_contracts = contractsForJuly2020) +
   labs(title = "Crop_progress_17 vs March Contract price")
 
