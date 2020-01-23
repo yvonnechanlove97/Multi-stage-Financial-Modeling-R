@@ -4,7 +4,34 @@
 \alias{plt_pretty}
 \title{Progress - Price Plot}
 \usage{
-plt_pretty(df1_progress, df2_contracts)
+plt_pretty(
+  df1_progress,
+  df2_contracts,
+  week_ending_col = "WEEK.ENDING",
+  n = 2,
+  line_columns = c("PROGRESS.in.PCT.PLANTED", "PROGRESS..5.YEAR.AVG.in.PCT.PLANTED",
+    "PROGRESS..PREVIOUS.YEAR.in.PCT.PLANTED", "PROGRESS.in.PCT.EMERGED",
+    "PROGRESS..5.YEAR.AVG.in.PCT.EMERGED", "PROGRESS..PREVIOUS.YEAR.in.PCT.EMERGED",
+    "PROGRESS.in.PCT.BLOOMING", "PROGRESS..5.YEAR.AVG.in.PCT.BLOOMING",
+    "PROGRESS..PREVIOUS.YEAR.in.PCT.BLOOMING", "PROGRESS.in.PCT.SETTING.PODS",
+    "PROGRESS..5.YEAR.AVG.in.PCT.SETTING.PODS",
+    "PROGRESS..PREVIOUS.YEAR.in.PCT.SETTING.PODS", "PROGRESS.in.PCT.DROPPING.LEAVES",
+    "PROGRESS..5.YEAR.AVG.in.PCT.DROPPING.LEAVES",     
+    "PROGRESS..PREVIOUS.YEAR.in.PCT.DROPPING.LEAVES", "PROGRESS.in.PCT.HARVESTED",
+    "PROGRESS..5.YEAR.AVG.in.PCT.HARVESTED", "PROGRESS..PREVIOUS.YEAR.in.PCT.HARVESTED"),
+  line_colors = c("Planted", "Planted", "Planted", "Emerged", "Emerged", "Emerged",
+    "Blooming", "Blooming", "Blooming", "Setting Pods", "Setting Pods", "Setting Pods",
+    "Dropping Leaves", "Dropping Leaves", "Dropping Leaves", "Harvested", "Harvested",
+    "Harvested"),
+  line_type = c("Current Year", "5 Years Average", "Previous Year", "Current Year",
+    "5 Years Average", "Previous Year", "Current Year", "5 Years Average",
+    "Previous Year", "Current Year", "5 Years Average", "Previous Year", "Current Year",
+    "5 Years Average", "Previous Year", "Current Year", "5 Years Average",
+    "Previous Year"),
+  color_mapping = c(Planted = "brown", Emerged = "darkgreen", Blooming = "green",
+    `Setting Pods` = "gold", `Dropping Leaves` = "red", Harvested = "purple"),
+  variable_mapping = c(`Current Year` = 1, `5 Years Average` = 2, `Previous Year` = 3)
+)
 }
 \arguments{
 \item{df1_progress}{Data frame containing progress}
