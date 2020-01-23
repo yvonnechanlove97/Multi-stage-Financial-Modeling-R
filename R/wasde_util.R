@@ -9,9 +9,11 @@
 #' @examples
 #' data=read_wasde(path="C:/Users/40463/OneDrive/Documents/2019 Fall/Minne/WASDE")
 #' @export
-read_wasde=function(path, sheet_name = "Page 15", col_range = "A13:A58",
-                    remove_slice = c(3, 5, 17:21, 33:37)){
-  file_list <- list.files(path, full.names = T)
+read_wasde <- function(path, sheet_name = "Page 15", col_range = "A13:A58",
+                       remove_slice = c(3, 5, 17:21, 33:37)) {
+  wd <- getwd()
+  setwd(path)
+  file_list <- list.files(path)
   data=data.frame()
   com_data=readxl::read_xls(path = file_list[1], sheet = sheet_name, range=col_range,col_names = 'SOYBEANS')
   if(!is.null(remove_slice)) {
@@ -27,5 +29,6 @@ read_wasde=function(path, sheet_name = "Page 15", col_range = "A13:A58",
     }
     com_data=cbind(com_data,newdata)
   }
+  setwd(wd)
   return(com_data)
 }
