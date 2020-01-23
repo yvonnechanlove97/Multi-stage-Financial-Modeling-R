@@ -68,7 +68,7 @@ corr_mat_weekly <- create_export_corr_plot(
 
 
 ```{r}
-data("soybeanWASDE")
-soybeanWASDE_clean <- clean_wasde(combined_data = soybeanWASDE)
+data("soybeanCombinedWASDE")
+soybeanWASDE_clean <- clean_wasde(combined_data = soybeanCombinedWASDE)
 plot_monthly_data(soybeanWASDE_clean)
 ```
