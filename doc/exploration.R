@@ -1,4 +1,4 @@
-## -----------------------------------------------------------------------------
+## ----warning=F, message=F-----------------------------------------------------
 library(FinancialModelingR)
 library(readxl)
 library(ggplot2)
@@ -8,7 +8,7 @@ data("soybeanCropProgressUSA2017", package = "FinancialModelingR")
 soybeanCropProgress2017$WEEK.ENDING <-
   as.Date(soybeanCropProgress2017$WEEK.ENDING, "%Y-%m-%d")
 
-## -----------------------------------------------------------------------------
+## ----fig.width = 7, fig.height = 4--------------------------------------------
 contractsForJuly2020 <- read_price(
   in_file = "private_data/ActiveSoybeanContractsforJuly2020.xlsx", delta_price = T,
   add_delta = T, subset = T, subset_min_date = "2017-01-01",
@@ -16,7 +16,7 @@ contractsForJuly2020 <- read_price(
 contractsForJuly2020$Date <- as.Date(contractsForJuly2020$Date, "%Y-%m-%d")
 print(head(contractsForJuly2020))
 
-## -----------------------------------------------------------------------------
+## ----fig.width = 7, fig.height = 4--------------------------------------------
 # DTM = document term matrix
 tweet_dtm_df <- readRDS("private_data/text_features.Rds")
 print(head(tweet_dtm_df))
@@ -39,12 +39,12 @@ create_corr_plot(independent_var_names = c("china", "trade", "money",
                  dependent_var_names = "july_2020_Close",
                  df = price_tweet_dtm_df)
 
-## -----------------------------------------------------------------------------
+## ----fig.width = 7, fig.height = 4--------------------------------------------
 plot_price_vs_weekly_series(df1_progress = soybeanCropProgress2017,
                             df2_contracts = contractsForJuly2020) +
   labs(title = "Crop_progress_17 vs March Contract price")
 
-## -----------------------------------------------------------------------------
+## ----fig.width = 7, fig.height = 4--------------------------------------------
 data("soybeanExports", package = "FinancialModelingR")
 competitors <- c("ARGENTINA", "BRAZIL")
 df_total_export <- soybeanExports %>% group_by(Country) %>%
@@ -66,7 +66,7 @@ corr_mat_weekly <- create_corr_plot(
   country_var = "Country",
   remove_countries = c("GRAND TOTAL", "KNOWN"))
 
-## -----------------------------------------------------------------------------
+## ----fig.width=7, fig.height=4------------------------------------------------
 data("soybeanCombinedWASDE")
 soybeanWASDE_clean <- clean_wasde(combined_data = soybeanCombinedWASDE)
 plot_monthly_data(soybeanWASDE_clean)
