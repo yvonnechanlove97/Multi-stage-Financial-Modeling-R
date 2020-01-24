@@ -6,7 +6,7 @@
 \usage{
 plot_price_vs_weekly_series(
   df1_progress,
-  df2_contracts,
+  df2_contracts = NULL,
   week_ending_col = "WEEK.ENDING",
   n = 2,
   series_type = "Crop Progress in percentage",
@@ -39,7 +39,7 @@ plot_price_vs_weekly_series(
 \arguments{
 \item{df1_progress}{Data frame containing weekly series}
 
-\item{df2_contracts}{Data frame containing close prices}
+\item{df2_contracts}{Data frame containing close prices. Leave as NULL if the weekly data has already been merged with daily prices}
 
 \item{week_ending_col}{Column name in `df1_progress` that contains the end of week for each data point}
 

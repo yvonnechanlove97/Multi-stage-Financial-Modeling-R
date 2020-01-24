@@ -2,7 +2,6 @@
 
 export(clean_wasde)
 export(create_corr_plot)
-export(create_export_corr_plot)
 export(crop_progress_group_diff)
 export(monthly_trans)
 export(plot_monthly_data)

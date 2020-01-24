@@ -2,7 +2,7 @@
 #' @description Plots the multiple weekly data series vs daily price series. Prices are considered n days before and n days after the end date of each week. Line color corresponds to the type of weekly series and line type corresponds to the type of variable.
 #'
 #' @param df1_progress Data frame containing weekly series
-#' @param df2_contracts Data frame containing close prices
+#' @param df2_contracts Data frame containing close prices. Leave as NULL if the weekly data has already been merged with daily prices
 #' @param week_ending_col Column name in `df1_progress` that contains the end of week for each data point
 #' @param n Number of days to lead and lag around week ending. Prices are compared between `week_end + n` and `week_end - n`
 #' @param series_type Label for type of weekly series - appears as y-axis label in plot
@@ -22,7 +22,7 @@
 #' plt_pretty(df1_progress = soybeanCropProgress2017, df2_contracts = contractsForJuly2020)
 #' @export
 plot_price_vs_weekly_series <- function(
-  df1_progress, df2_contracts, week_ending_col = "WEEK.ENDING", n = 2,
+  df1_progress, df2_contracts = NULL, week_ending_col = "WEEK.ENDING", n = 2,
   series_type = "Crop Progress in percentage", line_columns = c(
     "PROGRESS.in.PCT.PLANTED", "PROGRESS..5.YEAR.AVG.in.PCT.PLANTED",
     "PROGRESS..PREVIOUS.YEAR.in.PCT.PLANTED", "PROGRESS.in.PCT.EMERGED",
@@ -62,6 +62,9 @@ plot_price_vs_weekly_series <- function(
   variable_name = "Variable",
   variable_mapping = c("Current Year" = 1, "5 Years Average" = 2,
                        "Previous Year" = 3)) {
+  if(is.null(df2_contracts)) {
+    df2_contracts <- df1_progress
+  }
   # Close prices of last business day and the following business day
   date_1 <- df1_progress[, week_ending_col] - n
   date_2 <- df1_progress[, week_ending_col] + n
@@ -83,7 +86,6 @@ plot_price_vs_weekly_series <- function(
   gap2 <- max(tmp2$Close) - min(tmp2$Close)
   tmp1$Date <- as.Date(tmp1$Date, origin = "1970-01-01")
   tmp2$Date <- as.Date(tmp2$Date, origin = "1970-01-01")
-
   plt <- ggplot(data = df1_progress) +
     geom_point(data = tmp1,aes(
       x = Date, y = (Close - min(tmp1$Close)) * 100/gap1, alpha = 'Before')) +
@@ -120,13 +122,10 @@ plot_price_vs_weekly_series <- function(
 #'
 #' @param independent_var_names Character vector containing names of independent variables
 #' @param dependent_var_names Character vector containing names of dependent variables
-#' @param selected_countries Character vector containing names of selected countries
 #' @param df Data frame containing price merged with exports
-#' @param country_var Name of the column with Country
-#' @param top_corr Specifies 'k' in the top-k correlations for each country
-#' @param remove_countries Country names to be removed
-#' @return The sum of \code{x} and \code{y}.
+#' @return Correlation matrix between set of independent variables and set of dependent variables
 #' @examples
+#' ### Example 1 ###
 #' data("soybeanExports")
 #' competitors <- c("ARGENTINA", "BRAZIL")
 #' df_total_export <- soybeanExports %>% group_by(Country) %>%
@@ -139,41 +138,69 @@ plot_price_vs_weekly_series <- function(
 #' df_top_export = inner_join(contractsForJuly2020, df_top_export, by = "Date")
 #' ind_col <- c("Weekly_Exports", "CMY_Outstanding_Sales", "CMY_Gross_New_Sales",
 #'              "CMY_Net_Sales" ,"CMY_Total_Commitment")
-#' corr_mat_weekly = create_export_corr_plot(independent_var_names = ind_col,
-#'                                    dependent_var_names = colnames(df_top_export)[
-#'                                    grep("Close",colnames(df_top_export))],
-#'                                    selected_countries = selected_countries,
-#'                                    df = df_top_export, top_corr = 4)
+#' corr_mat_weekly = corr_mat_weekly <- create_corr_plot(
+#' independent_var_names = ind_col,
+#' dependent_var_names = colnames(df_top_export)[
+#'   grep("Close",colnames(df_top_export))],
+#' selected_countries = selected_countries,
+#' country_var = "Country",
+#' remove_countries = c("GRAND TOTAL", "KNOWN"),
+#' df = df_top_export, top_corr = 4)
+#'
+#' ### Example 2 ###
+#'
 #' @export
-create_export_corr_plot <- function(independent_var_names, dependent_var_names,
-                                    selected_countries, df, country_var = "Country",
-                                    top_corr = 4,
-                                    remove_countries = c("GRAND TOTAL", "KNOWN")) {
-  list_top_corr <- list()
-  list_corr_mat <- list()
-  col <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))
+create_corr_plot <- function(independent_var_names, dependent_var_names, df, ...) {
+  params <- list(...)
+  if("selected_countries" %in% names(params)) {
+    selected_countries <- params[["selected_countries"]]
+    remove_countries <- params[["remove_countries"]]
+    country_var <- params[["country_var"]]
+    corr_plot_list <- list()
+    # list_top_corr <- list()
+    # list_corr_mat <- list()
+    col <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))
 
-  independent_var = independent_var_names
-  dependent_var = dependent_var_names
-  if(!is.null(remove_countries)) {
-    selected_countries <- setdiff(selected_countries, remove_countries)
-  }
-  for (j in selected_countries) {
-    corr_mat = cor(x = df[df[, country_var] == j, independent_var],
-                   y = df[df[, country_var] == j, dependent_var],
-                   method = "pearson")
-    df_corr = as.data.frame(as.table(corr_mat))
-    df_ab_corr = df_corr[order(df_corr$Freq, decreasing = TRUE),]
+    independent_var = independent_var_names
+    dependent_var = dependent_var_names
+    if(!is.null(remove_countries)) {
+      selected_countries <- setdiff(selected_countries, remove_countries)
+    }
+    for (j in selected_countries) {
+      corr_mat = cor(x = df[df[, country_var] == j, independent_var],
+                     y = df[df[, country_var] == j, dependent_var],
+                     method = "pearson")
+      df_corr = as.data.frame(as.table(corr_mat))
+      df_ab_corr = df_corr[order(df_corr$Freq, decreasing = TRUE),]
 
-    list_top_corr[[paste0("top_corr_",j)]] = head(df_ab_corr, top_corr)
-    list_corr_mat[[paste0("corr_mat_",j)]] = corr_mat
-    corrplot(list_corr_mat[[paste0("corr_mat_",j)]],
-             tl.cex = .6,
-             method = "color",
-             addCoef.col = "black",
-             title = j,
-             mar = c(0,0,1,0))
+      # list_top_corr[[paste0("top_corr_",j)]] = head(df_ab_corr, top_corr)
+      # list_corr_mat[[paste0("corr_mat_",j)]] = corr_mat
+      corr_plot_list <- append(corr_plot_list,
+                               corrplot(corr_mat,
+                                        tl.cex = .6,
+                                        method = "color",
+                                        addCoef.col = "black",
+                                        title = j,
+                                        mar = c(0,0,1,0)))
+    }
+    # return_list = append(list_top_corr, list_corr_mat)
+    # return (return_list)
+    return(corr_plot_list)
+  } else if("remove_cols" %in% names(params)) {
+    remove_cols <- params[["remove_cols"]]
+  } else {
+    remove_cols <- NULL
   }
-  return_list = append(list_top_corr, list_corr_mat)
-  return (return_list)
+  if(is.null(independent_var_names)) {
+    independent_var_names <- setdiff(colnames(df), c(dependent_var_names))
+  }
+  independent_var_names <- setdiff(independent_var_names, remove_cols)
+  dependent_var_names <- setdiff(dependent_var_names, remove_cols)
+  corr_mat = cor(x = df[, independent_var_names],
+                 y = df[, dependent_var_names],
+                 method = "pearson")
+
+  return (corrplot(corr_mat,
+                   tl.cex = .6,
+                   method = "color", hclust.method = "ward"))
 }
