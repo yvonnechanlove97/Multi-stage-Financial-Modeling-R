@@ -9,6 +9,14 @@ vignette: >
 
 # Initialization
 
+`FinancialModelingR` package contains several data sets corresponding to commodities, especially soybeans. These data sets are publicly available and are refreshed in different frequencies. The following data sets will be used as examples to show the usage of `FinancialModelingR` for exploring the effects of data sets of different granularities on the daily commodity/stock price:
+
+- Soybean crop progress
+- Soybean weekly exports
+- Soybean WASDE reports
+
+Functions used for reading and preprocessing these data sets has also been provided in `FinancialModelingR` package. These functions are not discussed in this vignette.
+
 ## Loading Crop Progress from FinancialModelingR
 
 ```{r warning=F, message=F}
@@ -17,14 +25,28 @@ library(readxl)
 library(ggplot2)
 library(dplyr)
 library(corrplot)
-data("soybeanCropProgressUSA2017", package = "FinancialModelingR")
-soybeanCropProgress2017$WEEK.ENDING <-
-  as.Date(soybeanCropProgress2017$WEEK.ENDING, "%Y-%m-%d")
+data("soybeanCropProgressUSA2019", package = "FinancialModelingR")
+soybeanCropProgress2019$WEEK.ENDING <-
+  as.Date(soybeanCropProgress2019$WEEK.ENDING, "%Y-%m-%d")
 ```
 
-## Loading Private Data:
+## Loading Private Data
+
+Private data sets used:
+
+- Soybean July 2020 contract prices
+- Tweets related to China, soybeans and farmers from \@realdonaldtrump Twitter handle
 
 ### Price Data
+
+```{r fig.width=7, fig.height=4, warning=F, message=F}
+library(png)
+library(grid)
+img <- readPNG("private_data/july2020.PNG")
+grid.raster(img)
+```
+
+This module can be used to read contracts price from a given xlsx file that contains daily open, close, low and high prices of contracts. The structure of the file is as shown above. The function `read_price` can be used to read the file and create columns with change in price. It can also be used to subset the price data by start date and to rename the price columns by appending a given prefix.
 
 ```{r fig.width = 7, fig.height = 4}
 contractsForJuly2020 <- read_price(
@@ -36,6 +58,13 @@ print(head(contractsForJuly2020))
 ```
 
 ### Tweets
+
+```{r fig.width=7, fig.height=4, warning=F, message=F}
+img <- readPNG("private_data/realdonaldtrump.PNG")
+grid.raster(img)
+```
+
+This section uses document term matrix (DTM) created from Excel file containing tweets. The DTM is aggregated in daily level. This module merges the DTM with price to prepare for plotting.
 
 ```{r}
 # DTM = document term matrix
@@ -70,15 +99,15 @@ create_corr_plot(independent_var_names = c("china", "trade", "money",
                  df = price_tweet_dtm_df)
 ```
 
+## Weekly Data
+
 ### Soybean Crop Progress Example
 
 ```{r fig.width = 7, fig.height = 4, warning = F}
-plot_price_vs_weekly_series(df1_progress = soybeanCropProgress2017,
+plot_price_vs_weekly_series(df1_progress = soybeanCropProgress2019,
                             df2_contracts = contractsForJuly2020) +
-  labs(title = "Crop_progress_17 vs March Contract price")
+  labs(title = "Crop_progress_19 vs March Contract price")
 ```
-
-## Weekly Data
 
 ### Soybean Exports Example
 

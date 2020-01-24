@@ -4,9 +4,15 @@ library(readxl)
 library(ggplot2)
 library(dplyr)
 library(corrplot)
-data("soybeanCropProgressUSA2017", package = "FinancialModelingR")
-soybeanCropProgress2017$WEEK.ENDING <-
-  as.Date(soybeanCropProgress2017$WEEK.ENDING, "%Y-%m-%d")
+data("soybeanCropProgressUSA2019", package = "FinancialModelingR")
+soybeanCropProgress2019$WEEK.ENDING <-
+  as.Date(soybeanCropProgress2019$WEEK.ENDING, "%Y-%m-%d")
+
+## ----fig.width=7, fig.height=4, warning=F, message=F--------------------------
+library(png)
+library(grid)
+img <- readPNG("private_data/july2020.PNG")
+grid.raster(img)
 
 ## ----fig.width = 7, fig.height = 4--------------------------------------------
 contractsForJuly2020 <- read_price(
@@ -15,6 +21,10 @@ contractsForJuly2020 <- read_price(
   rename_price_columns = T, rename_prefix = "july_2020_", skip_lines = 3)
 contractsForJuly2020$Date <- as.Date(contractsForJuly2020$Date, "%Y-%m-%d")
 print(head(contractsForJuly2020))
+
+## ----fig.width=7, fig.height=4, warning=F, message=F--------------------------
+img <- readPNG("private_data/realdonaldtrump.PNG")
+grid.raster(img)
 
 ## -----------------------------------------------------------------------------
 # DTM = document term matrix
@@ -42,9 +52,9 @@ create_corr_plot(independent_var_names = c("china", "trade", "money",
                  df = price_tweet_dtm_df)
 
 ## ----fig.width = 7, fig.height = 4, warning = F-------------------------------
-plot_price_vs_weekly_series(df1_progress = soybeanCropProgress2017,
+plot_price_vs_weekly_series(df1_progress = soybeanCropProgress2019,
                             df2_contracts = contractsForJuly2020) +
-  labs(title = "Crop_progress_17 vs March Contract price")
+  labs(title = "Crop_progress_19 vs March Contract price")
 
 ## ----fig.width = 7, fig.height = 4--------------------------------------------
 data("soybeanExports", package = "FinancialModelingR")
