@@ -38,7 +38,27 @@ print(head(contractsForJuly2020))
 ## Daily Data: Tweets Example
 
 ```{r}
+# DTM = document term matrix
+tweet_dtm_df <- readRDS("private_data/text_features.Rds")
+print(head(tweet_dtm_df))
+price_tweet_dtm_df <- merge(tweet_dtm_df,
+                            contractsForJuly2020[, c("Date", "july_2020_Close")],
+                            by.x = "created_at", by.y = "Date")
+create_corr_plot(independent_var_names = NULL,
+                 dependent_var_names = "july_2020_Close",
+                 df = price_tweet_dtm_df,
+                 remove_cols = c("amp", "get", "want", "many", "will", "just",
+                                 "want", "can", "realdonaldtrump", "created_at",
+                                 "made", "going", "must", "make"))
 
+price_tweet_dtm_df$china_jobs <- apply(price_tweet_dtm_df[, -1], 1, function(row) {
+  as.integer((row["china"] * row["jobs"]) != 0)
+})
+create_corr_plot(independent_var_names = c("china", "trade", "money",
+                                           "deal", "tariffs",
+                                           "economy", "currency", "china_jobs"),
+                 dependent_var_names = "july_2020_Close",
+                 df = price_tweet_dtm_df)
 ```
 
 ## Weekly Soybean Crop Progress vs Soybean July 2020 Contract Price

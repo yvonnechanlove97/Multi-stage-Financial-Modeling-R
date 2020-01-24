@@ -20,7 +20,7 @@ Correlation matrix between set of independent variables and set of dependent var
 Creates correlation plot between dependent variables and independent variables for selected countries
 }
 \examples{
-### Example 1 ###
+### Example 1: Weekly exports ###
 data("soybeanExports")
 competitors <- c("ARGENTINA", "BRAZIL")
 df_total_export <- soybeanExports \%>\% group_by(Country) \%>\%
@@ -37,11 +37,31 @@ corr_mat_weekly = corr_mat_weekly <- create_corr_plot(
 independent_var_names = ind_col,
 dependent_var_names = colnames(df_top_export)[
   grep("Close",colnames(df_top_export))],
+df = df_top_export,
 selected_countries = selected_countries,
 country_var = "Country",
-remove_countries = c("GRAND TOTAL", "KNOWN"),
-df = df_top_export, top_corr = 4)
+remove_countries = c("GRAND TOTAL", "KNOWN"))
 
 ### Example 2 ###
+tweet_dtm_df <- readRDS("private_data/text_features.Rds")
+print(head(tweet_dtm_df))
+price_tweet_dtm_df <- merge(tweet_dtm_df,
+                            contractsForJuly2020[, c("Date", "july_2020_Close")],
+                            by.x = "created_at", by.y = "Date")
+create_corr_plot(independent_var_names = NULL,
+                 dependent_var_names = "july_2020_Close",
+                 df = price_tweet_dtm_df,
+                 remove_cols = c("amp", "get", "want", "many", "will", "just",
+                                 "want", "can", "realdonaldtrump", "created_at",
+                                 "made", "going", "must", "make"))
 
+### Example 3 ###
+price_tweet_dtm_df$china_jobs <- apply(price_tweet_dtm_df[, -1], 1, function(row) {
+  as.integer((row["china"] * row["jobs"]) != 0)
+})
+create_corr_plot(independent_var_names = c("china", "trade", "money",
+                                           "deal", "tariffs",
+                                           "economy", "currency", "china_jobs"),
+                 dependent_var_names = "july_2020_Close",
+                 df = price_tweet_dtm_df)
 }
