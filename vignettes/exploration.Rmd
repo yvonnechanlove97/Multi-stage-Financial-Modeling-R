@@ -22,7 +22,9 @@ soybeanCropProgress2017$WEEK.ENDING <-
   as.Date(soybeanCropProgress2017$WEEK.ENDING, "%Y-%m-%d")
 ```
 
-## Loading Private Price Data
+## Loading Private Data:
+
+### Price Data
 
 ```{r fig.width = 7, fig.height = 4}
 contractsForJuly2020 <- read_price(
@@ -33,17 +35,24 @@ contractsForJuly2020$Date <- as.Date(contractsForJuly2020$Date, "%Y-%m-%d")
 print(head(contractsForJuly2020))
 ```
 
-# Plotting
+### Tweets
 
-## Daily Data: Tweets Example
-
-```{r fig.width = 7, fig.height = 4}
+```{r}
 # DTM = document term matrix
 tweet_dtm_df <- readRDS("private_data/text_features.Rds")
 print(head(tweet_dtm_df))
 price_tweet_dtm_df <- merge(tweet_dtm_df,
                             contractsForJuly2020[, c("Date", "july_2020_Close")],
                             by.x = "created_at", by.y = "Date")
+```
+
+# Plotting
+
+## Daily Data
+
+### Soybean Tweets Example
+
+```{r fig.width = 7, fig.height = 4}
 create_corr_plot(independent_var_names = NULL,
                  dependent_var_names = "july_2020_Close",
                  df = price_tweet_dtm_df,
@@ -61,15 +70,17 @@ create_corr_plot(independent_var_names = c("china", "trade", "money",
                  df = price_tweet_dtm_df)
 ```
 
-## Weekly Soybean Crop Progress vs Soybean July 2020 Contract Price
+### Soybean Crop Progress Example
 
-```{r fig.width = 7, fig.height = 4}
+```{r fig.width = 7, fig.height = 4, warning = F}
 plot_price_vs_weekly_series(df1_progress = soybeanCropProgress2017,
                             df2_contracts = contractsForJuly2020) +
   labs(title = "Crop_progress_17 vs March Contract price")
 ```
 
-## Weekly Soybean Exports vs Soybean July 2020 Contract Price
+## Weekly Data
+
+### Soybean Exports Example
 
 ```{r fig.width = 7, fig.height = 4}
 data("soybeanExports", package = "FinancialModelingR")
@@ -94,6 +105,9 @@ corr_mat_weekly <- create_corr_plot(
   remove_countries = c("GRAND TOTAL", "KNOWN"))
 ```
 
+## Monthly Data
+
+### WASDE Example
 
 ```{r fig.width=7, fig.height=4}
 data("soybeanCombinedWASDE")
