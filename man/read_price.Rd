@@ -34,5 +34,5 @@ Reads an Excel file with Date, Open, High, Low and Close prices of a stock or fu
 }
 \examples{
 price_df <- read_price(in_file, delta_price = F, subset = F, skip_lines = 3)
-delta_price_df <- read_price(in_file, delta_price = F, subset = F, skip_lines = 3)
+delta_price_df <- read_price(in_file, delta_price = T, subset = F, skip_lines = 3)
 }

@@ -9,7 +9,7 @@
 #' @return The sum of \code{x} and \code{y}.
 #' @examples
 #' price_df <- read_price(in_file, delta_price = F, subset = F, skip_lines = 3)
-#' delta_price_df <- read_price(in_file, delta_price = F, subset = F, skip_lines = 3)
+#' delta_price_df <- read_price(in_file, delta_price = T, subset = F, skip_lines = 3)
 #' @export
 read_price <- function(in_file, delta_price = F, add_delta = F, subset = F,
                        subset_min_date = "2017-01-01", skip_lines = 3,
@@ -45,39 +45,48 @@ read_price <- function(in_file, delta_price = F, add_delta = F, subset = F,
   return(prices)
 }
 
-get_features <- function(df, prices) {
-  df <- merge(df, prices, by.x = "created_at", by.y = "Date")
-  df <- df[, sapply(df, sd) != 0]
-  return(df)
-}
+# get_features <- function(df, prices) {
+#   df <- merge(df, prices, by.x = "created_at", by.y = "Date")
+#   df <- df[, sapply(df, sd) != 0]
+#   return(df)
+# }
+#
+# back_fill_na <- function(series) {
+#   na_idx <- which(is.na(series))
+#   while(length(na_idx) > 0) {
+#     series[na_idx] <- series[na_idx + 1]
+#     na_idx <- which(is.na(series))
+#   }
+#   return(series)
+# }
+#
+# get_residues <- function(df, prices, model) {
+#   pred_df <- data.frame(Date = df$created_at,
+#                         pred_Close = predict(model, df),
+#                         stringsAsFactors = F)
+#   prices$Date_cut <- as.character(cut(x = prices$Date,
+#                                       breaks = pred_df$Date))
+#   prices$Date_cut[nrow(prices)] <-
+#     as.character(pred_df$Date[nrow(pred_df)])
+#   prices$Date_cut[is.na(prices$Date_cut)] <-
+#     prices$Date_cut[!is.na(prices$Date_cut)][1]
+#   prices$Date1 <- as.Date(prices$Date_cut, format = "%Y-%m-%d")
+#   prices <- merge(prices, pred_df, on.x = "Date1",
+#                   on.y = "Date", all.x = T)
+#   prices$Date1 <- prices$Date_cut <- NULL
+#
+#   prices$pred_Close <- backfill_na(prices$pred_Close)
+#
+#   prices$Close <- prices$Close - prices$pred_Close
+#   prices$pred_Close <- NULL
+#   return(prices)
+# }
 
-backfill_na <- function(series) {
-  na_idx <- which(is.na(series))
-  while(length(na_idx) > 0) {
-    series[na_idx] <- series[na_idx + 1]
-    na_idx <- which(is.na(series))
+forward_fill_na <- function(series) {
+  for(i in 2:length(series)) {
+    if(is.na(series[i])) {
+      series[i] <- series[i - 1]
+    }
   }
   return(series)
-}
-
-get_residues <- function(df, prices, model) {
-  pred_df <- data.frame(Date = df$created_at,
-                        pred_Close = predict(model, df),
-                        stringsAsFactors = F)
-  prices$Date_cut <- as.character(cut(x = prices$Date,
-                                      breaks = pred_df$Date))
-  prices$Date_cut[nrow(prices)] <-
-    as.character(pred_df$Date[nrow(pred_df)])
-  prices$Date_cut[is.na(prices$Date_cut)] <-
-    prices$Date_cut[!is.na(prices$Date_cut)][1]
-  prices$Date1 <- as.Date(prices$Date_cut, format = "%Y-%m-%d")
-  prices <- merge(prices, pred_df, on.x = "Date1",
-                  on.y = "Date", all.x = T)
-  prices$Date1 <- prices$Date_cut <- NULL
-
-  prices$pred_Close <- backfill_na(prices$pred_Close)
-
-  prices$Close <- prices$Close - prices$pred_Close
-  prices$pred_Close <- NULL
-  return(prices)
 }
