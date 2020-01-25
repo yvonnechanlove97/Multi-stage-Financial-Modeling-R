@@ -7,3 +7,60 @@ vignette: >
   \usepackage[utf8]{inputenc}
 ---
 
+# Initialization
+
+## Loading Libraries
+
+```{r}
+library(FinancialModelingR)
+```
+
+## Daily Data: Preprocessing and Merging Tweets
+
+```{r}
+tweet_df <- readRDS("private_data/text_features.Rds")
+colnames(tweet_df)[1] <- "Date"
+sds <- sapply(tweet_df[, 2:ncol(tweet_df)], sd)
+remove_cols <- 1 + which(sds == 0)
+tweet_df <- tweet_df[, -remove_cols]
+print(head(tweet_df))
+```
+
+## Weekly Data: Preprocessing and Merging (Soybean) Exports
+
+```{r}
+```
+
+## Monthly Data: Preprocessing and Merging (Soybean) WASDE
+
+```{r}
+data("soybeanCombinedWASDE")
+soybeanWASDE_clean <- clean_wasde(combined_data = soybeanCombinedWASDE)
+contractsForJuly2020 <- read_price(
+  in_file = "private_data/ActiveSoybeanContractsforJuly2020.xlsx", delta_price = T,
+  add_delta = T, subset = T, subset_min_date = "2017-01-01",
+  rename_price_columns = T, rename_prefix = "july_2020_", skip_lines = 3)
+contractsForJuly2020$Date <- as.Date(contractsForJuly2020$Date, "%Y-%m-%d")
+```
+
+# Modeling
+
+A sequentially boosted machine learning model can be built using `FinancialModelingR` package. The user has the option to choose the type of machine learning model to be built at each stage of boosting. Examples show how the package can be used for modeling close price with the following:
+
+- Merging with monthly data directly
+- Sequentially boosting with daily data, weekly data and monthly data in the given order
+
+## Daily Price + Monthly Data
+
+```{r}
+pred_model_list <- build_model(daily_price_df = contractsForJuly2020,
+                               other_granularity_df = soybeanWASDE_clean,
+                               daily_price_df_date_col = "Date",
+                               other_granularity_df_date_col = "Date",
+                               independent_variables = "Area Planted",
+                               dependent_variable = "july_2020_Close",
+                               lag = 1, model_type = "lm")
+print(pred_model_list$model)
+print(pred_model_list$train_pred_df)
+print(pred_model_list$test_pred_df)
+```
