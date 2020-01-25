@@ -8,7 +8,7 @@
 #' @param other_granularity_df Alternate data frame for modeling: independent variable data frame containing date column and independent variables
 #' @param daily_price_df_date_col Name of date column in `daily_price_df`
 #' @param other_granularity_df_date_col Name of date column in `other_granularity_df`
-#' @param independent_variables Names of independent variables in `other_granularity_df`. All columns in `other_granularity_df` are considered if this is left as NULL
+#' @param independent_variables Names of independent variables in `other_granularity_df`. All columns in `other_granularity_df` are considered if this is left as NULL. This parameter is not considered if x, y, model_type, test_x are provided
 #' @param dependent_variable Name of dependent variable in `daily_price_df`
 #' @param lag Number of days to lag the series for modeling. For example, if lag = 1 yesterday's independent variable values are used for predicting today's price
 #' @param model_type Type of machine learning model to be built. Currently `rpart` and `lm` are supported
@@ -26,18 +26,9 @@ build_model <- function(x = NULL, y = NULL, test_x,
                         lag = 1, model_type = "rpart") {
   keep_pattern <- "[^a-zA-Z0-9]"
   if(is.null(x)) {
-    other_granularity_df[, other_granularity_df_date_col] <-
-      as.Date(other_granularity_df[, other_granularity_df_date_col]) - lag
-    daily_price_df[, daily_price_df_date_col] <-
-      as.Date(daily_price_df[, daily_price_df_date_col])
-    date_col_idx <- which(colnames(daily_price_df) == daily_price_df_date_col)
-    colnames(daily_price_df)[date_col_idx] <- "Date"
-    date_col_idx <- which(colnames(other_granularity_df) == other_granularity_df_date_col)
-    colnames(other_granularity_df)[date_col_idx] <- "Date"
-    daily_price_df <- daily_price_df[order(daily_price_df$Date), ]
-    other_granularity_df <- other_granularity_df[order(other_granularity_df$Date), ]
-    merged_df <- merge(daily_price_df, other_granularity_df, by = "Date", all.x = T)
-    merged_df <- data.frame(sapply(merged_df, forward_fill_na))
+    merge_price_other_df(daily_price_df = daily_price_df,
+                         other_granularity_df = other_granularity_df,
+                         lag = 1)
     print(sum(is.na(merged_df)))
     test_seq <- seq(from = nrow(merged_df) - 29, to = nrow(merged_df), by = 1)
     test_x <- merged_df[test_seq, ]
@@ -66,6 +57,7 @@ build_model <- function(x = NULL, y = NULL, test_x,
   print(form)
   if(model_type == "rpart") {
     library(rpart)
+    library(rpart.plot)
     model <- rpart(form, merged_df)
   } else if(model_type == "lm") {
     model <- lm(form, merged_df)

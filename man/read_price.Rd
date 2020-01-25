@@ -18,16 +18,22 @@ read_price(
 \arguments{
 \item{delta_price}{Flag indicating whether change in price should be calculated}
 
+\item{add_delta}{Flag indicating whether the change in price should be added as new column. Setting to FALSE replaces the existing price columns}
+
 \item{subset}{Flag indicating whether only a subset of the data should be used}
 
 \item{subset_min_date}{Character string indicating the minimum date to be included in subset after reading the price file}
 
 \item{skip_lines}{Number of lines above the header line in the Excel file}
 
+\item{rename_price_columns}{Flag indicating whether price columns should be renamed}
+
+\item{rename_prefix}{Prefix use while renaming price columns}
+
 \item{file}{Path to a Excel file with Date, Open, High, Low and Close prices}
 }
 \value{
-The sum of \code{x} and \code{y}.
+Data frame with Date column and price columns with given prefix
 }
 \description{
 Reads an Excel file with Date, Open, High, Low and Close prices of a stock or future contract

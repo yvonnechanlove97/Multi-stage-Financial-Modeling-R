@@ -3,10 +3,13 @@
 #'
 #' @param file Path to a Excel file with Date, Open, High, Low and Close prices
 #' @param delta_price Flag indicating whether change in price should be calculated
+#' @param add_delta Flag indicating whether the change in price should be added as new column. Setting to FALSE replaces the existing price columns
 #' @param subset Flag indicating whether only a subset of the data should be used
 #' @param subset_min_date Character string indicating the minimum date to be included in subset after reading the price file
 #' @param skip_lines Number of lines above the header line in the Excel file
-#' @return The sum of \code{x} and \code{y}.
+#' @param rename_price_columns Flag indicating whether price columns should be renamed
+#' @param rename_prefix Prefix use while renaming price columns
+#' @return Data frame with Date column and price columns with given prefix
 #' @examples
 #' price_df <- read_price(in_file, delta_price = F, subset = F, skip_lines = 3)
 #' delta_price_df <- read_price(in_file, delta_price = T, subset = F, skip_lines = 3)
@@ -92,4 +95,33 @@ forward_fill_na <- function(series) {
     }
   }
   return(series)
+}
+
+
+#' @title Merge Different Granularities
+#' @description Merges data frames of different time granularities and fills missing values with previous non-missing value
+#'
+#' @param daily_price_df Alternate data frame for modeling: daily price data frame containing date column and price
+#' @param other_granularity_df Alternate data frame for modeling: independent variable data frame containing date column and independent variables
+#' @param lag Number of days to lag the series for modeling. For example, if lag = 1 yesterday's independent variable values are used for predicting today's price
+#' @return Data frame with merged output of daily price data and other data frame of different granularity. The missing values in other data frame are filled with previous known value
+#' @examples
+#' merge_price_other_df(daily_price_df = contractsForJuly2020,
+#' other_granularity_df = soybeanWASDE_clean,
+#' lag = 1)
+#' @export
+merge_price_other_df <- function(daily_price_df, other_granularity_df, lag = 1) {
+  other_granularity_df[, other_granularity_df_date_col] <-
+    as.Date(other_granularity_df[, other_granularity_df_date_col]) - lag
+  daily_price_df[, daily_price_df_date_col] <-
+    as.Date(daily_price_df[, daily_price_df_date_col])
+  date_col_idx <- which(colnames(daily_price_df) == daily_price_df_date_col)
+  colnames(daily_price_df)[date_col_idx] <- "Date"
+  date_col_idx <- which(colnames(other_granularity_df) == other_granularity_df_date_col)
+  colnames(other_granularity_df)[date_col_idx] <- "Date"
+  daily_price_df <- daily_price_df[order(daily_price_df$Date), ]
+  other_granularity_df <- other_granularity_df[order(other_granularity_df$Date), ]
+  merged_df <- merge(daily_price_df, other_granularity_df, by = "Date", all.x = T)
+  merged_df <- data.frame(sapply(merged_df, forward_fill_na))
+  return(merged_df)
 }

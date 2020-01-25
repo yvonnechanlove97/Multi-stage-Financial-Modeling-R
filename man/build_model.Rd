@@ -31,7 +31,7 @@ build_model(
 
 \item{other_granularity_df_date_col}{Name of date column in `other_granularity_df`}
 
-\item{independent_variables}{Names of independent variables in `other_granularity_df`. All columns in `other_granularity_df` are considered if this is left as NULL}
+\item{independent_variables}{Names of independent variables in `other_granularity_df`. All columns in `other_granularity_df` are considered if this is left as NULL. This parameter is not considered if x, y, model_type, test_x are provided}
 
 \item{dependent_variable}{Name of dependent variable in `daily_price_df`}
 
