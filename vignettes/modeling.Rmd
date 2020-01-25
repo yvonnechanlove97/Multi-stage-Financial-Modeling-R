@@ -1,0 +1,9 @@
+---
+title: "Modeling using FinancialModelingR"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Modeling using FinancialModelingR package}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+

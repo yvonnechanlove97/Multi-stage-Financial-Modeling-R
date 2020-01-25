@@ -1,5 +1,5 @@
 ---
-title: "Exploration Using FinancialModelingR"
+title: "Exploration using FinancialModelingR"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Exploration using FinancialModelingR package}

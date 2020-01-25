@@ -1,0 +1,9 @@
+---
+title: "Preprocessing using FinancialModelingR"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Preprocessing data using FinancialModelingR package}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
