@@ -82,8 +82,8 @@ pred_model_list <- build_model(daily_price_df = contractsForJuly2020,
                                dependent_variable = "july_2020_Close",
                                lag = 1, model_type = "lm")
 print(pred_model_list$model)
-print(pred_model_list$train_pred_df)
-print(pred_model_list$test_pred_df)
+print(head(pred_model_list$train_pred_df))
+print(head(pred_model_list$test_pred_df))
 ```
 
 ## Boosting Sequentially
