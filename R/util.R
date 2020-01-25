@@ -11,10 +11,12 @@
 #' price_df <- read_price(in_file, delta_price = F, subset = F, skip_lines = 3)
 #' delta_price_df <- read_price(in_file, delta_price = T, subset = F, skip_lines = 3)
 #' @export
+
 read_price <- function(in_file, delta_price = F, add_delta = F, subset = F,
                        subset_min_date = "2017-01-01", skip_lines = 3,
                        rename_price_columns = F, rename_prefix = NULL) {
-  prices <- data.frame(read_excel(in_file, skip = skip_lines))
+  library(readxl)
+  prices <- data.frame(readxl::read_excel(in_file, skip = skip_lines))
   prices$Date <- as.Date(prices$Date, format = "%Y-%m-%d")
   prices <- prices[order(prices$Date), ]
   if(delta_price) {

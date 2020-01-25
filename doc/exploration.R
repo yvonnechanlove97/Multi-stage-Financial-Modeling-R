@@ -1,9 +1,5 @@
 ## ----warning=F, message=F-----------------------------------------------------
 library(FinancialModelingR)
-library(readxl)
-library(ggplot2)
-library(dplyr)
-library(corrplot)
 data("soybeanCropProgressUSA2019", package = "FinancialModelingR")
 soybeanCropProgress2019$WEEK.ENDING <-
   as.Date(soybeanCropProgress2019$WEEK.ENDING, "%Y-%m-%d")
@@ -57,6 +53,7 @@ plot_price_vs_weekly_series(df1_progress = soybeanCropProgress2019,
   labs(title = "Crop_progress_19 vs March Contract price")
 
 ## ----fig.width = 7, fig.height = 4--------------------------------------------
+library(dplyr)
 data("soybeanExports", package = "FinancialModelingR")
 competitors <- c("ARGENTINA", "BRAZIL")
 df_total_export <- soybeanExports %>% group_by(Country) %>%

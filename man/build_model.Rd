@@ -7,7 +7,6 @@
 build_model(
   x = NULL,
   y = NULL,
-  model_type = "rpart",
   test_x,
   daily_price_df,
   other_granularity_df,
@@ -15,15 +14,14 @@ build_model(
   other_granularity_df_date_col,
   independent_variables,
   dependent_variable,
-  lag = 1
+  lag = 1,
+  model_type = "rpart"
 )
 }
 \arguments{
 \item{x}{Data frame containing date column and independent variables with or without missing values}
 
 \item{y}{Series of outcome variable values}
-
-\item{model_type}{Type of machine learning model to be built. Currently `rpart` and `lm` are supported}
 
 \item{daily_price_df}{Alternate data frame for modeling: daily price data frame containing date column and price}
 
@@ -38,6 +36,8 @@ build_model(
 \item{dependent_variable}{Name of dependent variable in `daily_price_df`}
 
 \item{lag}{Number of days to lag the series for modeling. For example, if lag = 1 yesterday's independent variable values are used for predicting today's price}
+
+\item{model_type}{Type of machine learning model to be built. Currently `rpart` and `lm` are supported}
 
 \item{n}{Number of days to lead and lag around week ending. Prices are compared between `week_end + n` and `week_end - n`}
 }

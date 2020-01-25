@@ -62,6 +62,7 @@ plot_price_vs_weekly_series <- function(
   variable_name = "Variable",
   variable_mapping = c("Current Year" = 1, "5 Years Average" = 2,
                        "Previous Year" = 3)) {
+  library(ggplot2)
   if(is.null(df2_contracts)) {
     df2_contracts <- df1_progress
   }
@@ -171,6 +172,7 @@ plot_price_vs_weekly_series <- function(
 #'                  df = price_tweet_dtm_df)
 #' @export
 create_corr_plot <- function(independent_var_names, dependent_var_names, df, ...) {
+  library(corrplot)
   params <- list(...)
   if("selected_countries" %in% names(params)) {
     selected_countries <- params[["selected_countries"]]
