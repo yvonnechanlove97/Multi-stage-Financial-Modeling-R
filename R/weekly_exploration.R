@@ -150,7 +150,6 @@ plot_price_vs_weekly_series <- function(
 #'
 #' ### Example 2 ###
 #' tweet_dtm_df <- readRDS("private_data/text_features.Rds")
-#' print(head(tweet_dtm_df))
 #' price_tweet_dtm_df <- merge(tweet_dtm_df,
 #'                             contractsForJuly2020[, c("Date", "july_2020_Close")],
 #'                             by.x = "created_at", by.y = "Date")

@@ -10,6 +10,7 @@
 #' @param other_granularity_df_date_col Name of date column in `other_granularity_df`
 #' @param independent_variables Names of independent variables in `other_granularity_df`. All columns in `other_granularity_df` are considered if this is left as NULL. This parameter is not considered if x, y, model_type, test_x are provided
 #' @param dependent_variable Name of dependent variable in `daily_price_df`
+#' @param fill_missing_with_0 Flag indicating whether missing values in merged data frame should be replaced with 0
 #' @param lag Number of days to lag the series for modeling. For example, if lag = 1 yesterday's independent variable values are used for predicting today's price
 #' @param model_type Type of machine learning model to be built. Currently `rpart` and `lm` are supported
 #' @return List containing the model, predictions for training set and predictions for test set along with residues
@@ -23,14 +24,22 @@ build_model <- function(x = NULL, y = NULL, test_x,
                         other_granularity_df_date_col,
                         independent_variables,
                         dependent_variable,
+                        fill_missing_with_0 = FALSE,
                         lag = 1, model_type = "rpart") {
   keep_pattern <- "[^a-zA-Z0-9]"
   if(is.null(x)) {
-    merged_df <- merge_price_other_df(daily_price_df = daily_price_df,
-                         daily_price_df_date_col = daily_price_df_date_col,
-                         other_granularity_df = other_granularity_df,
-                         other_granularity_df_date_col = other_granularity_df_date_col,
-                         lag = 1)
+    merged_df <- merge_price_other_df(
+      daily_price_df = daily_price_df,
+      daily_price_df_date_col = daily_price_df_date_col,
+      other_granularity_df = other_granularity_df,
+      other_granularity_df_date_col = other_granularity_df_date_col,
+      lag = 1)
+    reqd_col <- which(colnames(daily_price_df) == daily_price_df_date_col)
+    colnames(daily_price_df)[reqd_col] <- "Date"
+    rownames(daily_price_df) <- NULL
+    if(fill_missing_with_0) {
+      merged_df[is.na(merged_df)] <- 0
+    }
     test_seq <- seq(from = nrow(merged_df) - 29, to = nrow(merged_df), by = 1)
     test_x <- merged_df[test_seq, ]
     merged_df <- merged_df[-test_seq, ]
@@ -55,7 +64,6 @@ build_model <- function(x = NULL, y = NULL, test_x,
   dependent_variable <- gsub(x = dependent_variable, pattern = keep_pattern,
                              replacement = ".")
   form <- as.formula(paste0(dependent_variable, " ~ ", independent_variables))
-  print(form)
   if(model_type == "rpart") {
     library(rpart)
     library(rpart.plot)
@@ -67,14 +75,23 @@ build_model <- function(x = NULL, y = NULL, test_x,
   test_pred <- predict(model, test_x)
   train_pred_df <- data.frame(Date = merged_df$Date, prediction = train_pred)
   test_pred_df <- data.frame(Date = test_x$Date, prediction = test_pred)
-  if(is.null(x)) {
+  if(!is.null(x)) {
     train_pred_df <- merge(merged_df, train_pred_df, by = "Date", all.x = T)
     test_pred_df <- merge(merged_df, test_pred_df, by = "Date", all.x = T)
   } else {
-    train_pred_df <- merge(daily_price_df[-test_seq, ], train_pred_df,
+    reqd_cols <- c("Date", "prediction")
+    train_pred_df <- merge(daily_price_df[-test_seq, ],
+                           train_pred_df,
                            by = "Date", all.x = T)
-    test_pred_df <- merge(daily_price_df[test_seq, ], test_pred_df,
+    test_pred_df <- merge(daily_price_df[test_seq, ],
+                          test_pred_df,
                           by = "Date", all.x = T)
+    colnames(train_pred_df) <- gsub(colnames(train_pred_df),
+                                    pattern = keep_pattern,
+                                    replacement = ".")
+    colnames(test_pred_df) <- gsub(colnames(test_pred_df),
+                                   pattern = keep_pattern,
+                                   replacement = ".")
   }
   train_pred_df$prediction <- forward_fill_na(train_pred_df$prediction)
   train_pred_df$residue <-

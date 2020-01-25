@@ -14,6 +14,7 @@ build_model(
   other_granularity_df_date_col,
   independent_variables,
   dependent_variable,
+  fill_missing_with_0 = FALSE,
   lag = 1,
   model_type = "rpart"
 )
@@ -34,6 +35,8 @@ build_model(
 \item{independent_variables}{Names of independent variables in `other_granularity_df`. All columns in `other_granularity_df` are considered if this is left as NULL. This parameter is not considered if x, y, model_type, test_x are provided}
 
 \item{dependent_variable}{Name of dependent variable in `daily_price_df`}
+
+\item{fill_missing_with_0}{Flag indicating whether missing values in merged data frame should be replaced with 0}
 
 \item{lag}{Number of days to lag the series for modeling. For example, if lag = 1 yesterday's independent variable values are used for predicting today's price}
 
