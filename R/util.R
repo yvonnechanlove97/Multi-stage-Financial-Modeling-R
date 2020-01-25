@@ -112,7 +112,11 @@ forward_fill_na <- function(series) {
 #' other_granularity_df = soybeanWASDE_clean,
 #' lag = 1)
 #' @export
-merge_price_other_df <- function(daily_price_df, other_granularity_df, lag = 1) {
+merge_price_other_df <- function(daily_price_df,
+                                 daily_price_df_date_col,
+                                 other_granularity_df,
+                                 other_granularity_df_date_col,
+                                 lag = 1) {
   other_granularity_df[, other_granularity_df_date_col] <-
     as.Date(other_granularity_df[, other_granularity_df_date_col]) - lag
   daily_price_df[, daily_price_df_date_col] <-
