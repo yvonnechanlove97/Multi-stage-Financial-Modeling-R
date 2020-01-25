@@ -102,7 +102,9 @@ forward_fill_na <- function(series) {
 #' @description Merges data frames of different time granularities and fills missing values with previous non-missing value
 #'
 #' @param daily_price_df Alternate data frame for modeling: daily price data frame containing date column and price
+#' @param daily_price_df_date_col Name of date column in `daily_price_df`
 #' @param other_granularity_df Alternate data frame for modeling: independent variable data frame containing date column and independent variables
+#' @param other_granularity_df_date_col Name of date column in `other_granularity_df`
 #' @param lag Number of days to lag the series for modeling. For example, if lag = 1 yesterday's independent variable values are used for predicting today's price
 #' @return Data frame with merged output of daily price data and other data frame of different granularity. The missing values in other data frame are filled with previous known value
 #' @examples

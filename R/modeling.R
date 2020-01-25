@@ -27,7 +27,9 @@ build_model <- function(x = NULL, y = NULL, test_x,
   keep_pattern <- "[^a-zA-Z0-9]"
   if(is.null(x)) {
     merge_price_other_df(daily_price_df = daily_price_df,
+                         daily_price_df_date_col = daily_price_df_date_col,
                          other_granularity_df = other_granularity_df,
+                         other_granularity_df_date_col = other_granularity_df_date_col,
                          lag = 1)
     print(sum(is.na(merged_df)))
     test_seq <- seq(from = nrow(merged_df) - 29, to = nrow(merged_df), by = 1)

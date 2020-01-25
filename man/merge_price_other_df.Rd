@@ -12,6 +12,10 @@ merge_price_other_df(daily_price_df, other_granularity_df, lag = 1)
 \item{other_granularity_df}{Alternate data frame for modeling: independent variable data frame containing date column and independent variables}
 
 \item{lag}{Number of days to lag the series for modeling. For example, if lag = 1 yesterday's independent variable values are used for predicting today's price}
+
+\item{daily_price_df_date_col}{Name of date column in `daily_price_df`}
+
+\item{other_granularity_df_date_col}{Name of date column in `other_granularity_df`}
 }
 \value{
 Data frame with merged output of daily price data and other data frame of different granularity. The missing values in other data frame are filled with previous known value
