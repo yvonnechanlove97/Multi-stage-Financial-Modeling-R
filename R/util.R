@@ -42,6 +42,7 @@ read_price <- function(in_file, delta_price = F, add_delta = F, subset = F,
     colnames(prices)[2:ncol(prices)] <-
       paste0(rename_prefix, colnames(prices)[2:ncol(prices)])
   }
+  rownames(prices) <- NULL
   return(prices)
 }
 
