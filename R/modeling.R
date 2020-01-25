@@ -3,7 +3,6 @@
 #'
 #' @param x Data frame containing date column and independent variables with or without missing values
 #' @param y Series of outcome variable values
-#' @param model_type Type of machine learning model to be built. Currently `rpart` and `lm` are supported
 #' @param n Number of days to lead and lag around week ending. Prices are compared between `week_end + n` and `week_end - n`
 #' @param daily_price_df Alternate data frame for modeling: daily price data frame containing date column and price
 #' @param other_granularity_df Alternate data frame for modeling: independent variable data frame containing date column and independent variables
@@ -12,19 +11,20 @@
 #' @param independent_variables Names of independent variables in `other_granularity_df`. All columns in `other_granularity_df` are considered if this is left as NULL
 #' @param dependent_variable Name of dependent variable in `daily_price_df`
 #' @param lag Number of days to lag the series for modeling. For example, if lag = 1 yesterday's independent variable values are used for predicting today's price
+#' @param model_type Type of machine learning model to be built. Currently `rpart` and `lm` are supported
 #' @return List containing the model, predictions for training set and predictions for test set along with residues
 #' @examples
 #'
 #' @export
 
-build_model <- function(x = NULL, y = NULL, model_type = "rpart",
-                        test_x,
+build_model <- function(x = NULL, y = NULL, test_x,
                         daily_price_df, other_granularity_df,
                         daily_price_df_date_col,
                         other_granularity_df_date_col,
                         independent_variables,
                         dependent_variable,
-                        lag = 1) {
+                        lag = 1, model_type = "rpart") {
+  keep_pattern <- "[^a-zA-Z0-9]"
   if(is.null(x)) {
     other_granularity_df[, other_granularity_df_date_col] <-
       as.Date(other_granularity_df[, other_granularity_df_date_col]) - lag
@@ -34,10 +34,19 @@ build_model <- function(x = NULL, y = NULL, model_type = "rpart",
     colnames(daily_price_df)[date_col_idx] <- "Date"
     date_col_idx <- which(colnames(other_granularity_df) == other_granularity_df_date_col)
     colnames(other_granularity_df)[date_col_idx] <- "Date"
-    merged_df <- merge(daily_price_df, other_granularity_df, by = "Date")
+    daily_price_df <- daily_price_df[order(daily_price_df$Date), ]
+    other_granularity_df <- other_granularity_df[order(other_granularity_df$Date), ]
+    merged_df <- merge(daily_price_df, other_granularity_df, by = "Date", all.x = T)
+    merged_df <- data.frame(sapply(merged_df, forward_fill_na))
+    print(sum(is.na(merged_df)))
     test_seq <- seq(from = nrow(merged_df) - 29, to = nrow(merged_df), by = 1)
     test_x <- merged_df[test_seq, ]
     merged_df <- merged_df[-test_seq, ]
+    colnames(merged_df) <- gsub(x = colnames(merged_df),
+                                pattern = keep_pattern, replacement = ".")
+    colnames(other_granularity_df) <-
+      gsub(x = colnames(other_granularity_df),
+           pattern = keep_pattern, replacement = ".")
     if(is.null(independent_variables)) {
       independent_variables <- setdiff(colnames(other_granularity_df), "Date")
     }
@@ -48,9 +57,15 @@ build_model <- function(x = NULL, y = NULL, model_type = "rpart",
     independent_variables <- setdiff(colnames(x), "Date")
     dependent_variable <- "y"
   }
+  independent_variables <- gsub(x = independent_variables, pattern = keep_pattern,
+                                replacement = ".")
   independent_variables <- paste0(independent_variables, collapse = " + ")
+  dependent_variable <- gsub(x = dependent_variable, pattern = keep_pattern,
+                             replacement = ".")
   form <- as.formula(paste0(dependent_variable, " ~ ", independent_variables))
+  print(form)
   if(model_type == "rpart") {
+    library(rpart)
     model <- rpart(form, merged_df)
   } else if(model_type == "lm") {
     model <- lm(form, merged_df)
