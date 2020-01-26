@@ -7,13 +7,13 @@
 #' @param remove_slice Indices of columns to remove from the column range. Use NULL to keep all columns
 #' @return Data frame of the combined data for required commodity (example: soybeans, corn)
 #' @examples
-#' data=read_wasde(path="C:/Users/40463/OneDrive/Documents/2019 Fall/Minne/WASDE")
+#' data=read_wasde(path="raw_data/WASDE")
 #' @export
 read_wasde <- function(path, sheet_name = "Page 15", col_range = "A13:A58",
                        remove_slice = c(3, 5, 17:21, 33:37)) {
   wd <- getwd()
   setwd(path)
-  file_list <- list.files(path)
+  file_list <- list.files()
   data=data.frame()
   com_data=readxl::read_xls(path = file_list[1], sheet = sheet_name, range=col_range,col_names = 'SOYBEANS')
   if(!is.null(remove_slice)) {

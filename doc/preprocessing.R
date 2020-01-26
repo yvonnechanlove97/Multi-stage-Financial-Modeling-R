@@ -51,11 +51,31 @@ df_top_export <- soybeanExports[sapply(
   soybeanExports$Country, function(country) country %in% selected_countries), ]
 saveRDS(df_top_export, "preprocessed_data/top_10_export_countries.Rds")
 
+## ----fig.width=7, fig.height=4------------------------------------------------
+img <- readPNG("private_data/crop_progress.PNG")
+grid.raster(img)
+
+## -----------------------------------------------------------------------------
+soybeanCropProgress2019 <- read.csv("raw_data/ExportSalesDataByCommodity(Soybeans).csv")
+soybeanCropProgress2019 <- soybeanCropProgress2019[, -c(2:5,7)]
+
 ## -----------------------------------------------------------------------------
 data("soybeanCropProgressUSA2019", package = "FinancialModelingR")
 soybeanCropProgress2019$WEEK.ENDING <-
   as.Date(soybeanCropProgress2019$WEEK.ENDING, "%Y-%m-%d")
 saveRDS(soybeanCropProgress2019, "preprocessed_data/soybeanCropProgress2019.Rds")
+
+## ----fig.width=7, fig.height=4------------------------------------------------
+img <- readPNG("private_data/wasde_folder.PNG")
+grid.raster(img)
+
+## ----fig.width=7, fig.height=4------------------------------------------------
+img <- readPNG("private_data/wasde_file.PNG")
+grid.raster(img)
+
+## -----------------------------------------------------------------------------
+library(readxl)
+soybeanCombinedWASDE <- read_wasde(path = "raw_data/WASDE/")
 
 ## -----------------------------------------------------------------------------
 data("soybeanCombinedWASDE")

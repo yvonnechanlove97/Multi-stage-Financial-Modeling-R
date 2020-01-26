@@ -66,6 +66,8 @@ saveRDS(tweet_df, "preprocessed_data/tweet_df.Rds")
 
 # Export Sales Report
 
+Export sales report is released by *verify* USDA every week. It contains the weekly exports and sales value of different crops.
+
 ## Raw Exports Data
 
 Structure of a typical raw export sales report is shown below:
@@ -101,7 +103,27 @@ df_top_export <- soybeanExports[sapply(
 saveRDS(df_top_export, "preprocessed_data/top_10_export_countries.Rds")
 ```
 
-# Crop Progress *Rework*
+# Crop Progress
+
+Crop progress report is released by *verify* USDA every week. It contains the weekly progress in percentage of different crop attributes such as planted, harvested, blooming, etc.
+
+## Raw Crop Progress Data
+
+Structure of a typical crop progress report is shown below:
+
+```{r fig.width=7, fig.height=4}
+img <- readPNG("private_data/crop_progress.PNG")
+grid.raster(img)
+```
+
+## Preprocessing Raw Crop Progress Data
+
+```{r}
+soybeanCropProgress2019 <- read.csv("raw_data/ExportSalesDataByCommodity(Soybeans).csv")
+soybeanCropProgress2019 <- soybeanCropProgress2019[, -c(2:5,7)]
+```
+
+## From `FinancialModelingR`
 
 ```{r}
 data("soybeanCropProgressUSA2019", package = "FinancialModelingR")
@@ -110,7 +132,34 @@ soybeanCropProgress2019$WEEK.ENDING <-
 saveRDS(soybeanCropProgress2019, "preprocessed_data/soybeanCropProgress2019.Rds")
 ```
 
-# WASDE Report *Rework*
+# WASDE Report
+
+Crop progress report is released by *verify* USDA every month. It contains information for several crops such as area planted, area harvested, yield per acre, etc.
+
+## Raw WASDE Data
+
+### Folder Structure
+
+```{r fig.width=7, fig.height=4}
+img <- readPNG("private_data/wasde_folder.PNG")
+grid.raster(img)
+```
+
+### File Structure
+
+```{r fig.width=7, fig.height=4}
+img <- readPNG("private_data/wasde_file.PNG")
+grid.raster(img)
+```
+
+## Preprocessing Raw WASDE Data
+
+```{r}
+library(readxl)
+soybeanCombinedWASDE <- read_wasde(path = "raw_data/WASDE/")
+```
+
+## From `FinancialModelingR`
 
 ```{r}
 data("soybeanCombinedWASDE")

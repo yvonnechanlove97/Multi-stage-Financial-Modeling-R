@@ -27,5 +27,5 @@ Data frame of the combined data for required commodity (example: soybeans, corn)
 Extract only soybean data from WASDE reports and combine the data
 }
 \examples{
-data=read_wasde(path="C:/Users/40463/OneDrive/Documents/2019 Fall/Minne/WASDE")
+data=read_wasde(path="raw_data/WASDE")
 }
