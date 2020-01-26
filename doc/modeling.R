@@ -57,3 +57,23 @@ print(pred_model_list1$model)
 train_pred_df <- pred_model_list1$train_pred_df
 test_pred_df <- pred_model_list1$test_pred_df
 
+## -----------------------------------------------------------------------------
+y <- train_pred_df$residue
+x <- merge(contractsForJuly2020[, c("Date", "july_2020_Close")],
+           soybeanWASDE_clean, all.x = T)
+fill_cols <- setdiff(colnames(soybeanWASDE_clean), "Date")
+# soybeanWASDE_clean[, fill_cols] <- sapply(soybeanWASDE_clean[, fill_cols],
+#                                           forward_fill_na)
+test_x <- x[642:671, ]
+x <- x[1:641, ]
+test_y <- test_pred_df$residue
+
+pred_model_list2 <- build_model(x = x,
+                                y = y,
+                                test_x = test_x,
+                                test_y = test_y,
+                                independent_variables = c("Area Planted"),
+                                fill_missing_with_0 = F,
+                                dependent_variable = "july_2020_Close",
+                                lag = 1, model_type = "lm")
+

@@ -3,7 +3,8 @@
 #'
 #' @param x Data frame containing date column and independent variables with or without missing values
 #' @param y Series of outcome variable values
-#' @param n Number of days to lead and lag around week ending. Prices are compared between `week_end + n` and `week_end - n`
+#' @param test_x Data frame containing test set independent variables
+#' @param test_y Series of test outputs
 #' @param daily_price_df Alternate data frame for modeling: daily price data frame containing date column and price
 #' @param other_granularity_df Alternate data frame for modeling: independent variable data frame containing date column and independent variables
 #' @param daily_price_df_date_col Name of date column in `daily_price_df`
@@ -18,7 +19,7 @@
 #'
 #' @export
 
-build_model <- function(x = NULL, y = NULL, test_x,
+build_model <- function(x = NULL, y = NULL, test_x = NULL, test_y = NULL,
                         daily_price_df, other_granularity_df,
                         daily_price_df_date_col,
                         other_granularity_df_date_col,
@@ -53,9 +54,16 @@ build_model <- function(x = NULL, y = NULL, test_x,
     }
   } else {
     x <- data.frame(sapply(x, forward_fill_na))
+    test_x <- data.frame(sapply(test_x, forward_fill_na))
+    colnames(x) <- colnames(test_x) <-
+      gsub(x = colnames(x), pattern = "[^a-zA-Z0-9]", replacement = ".")
     merged_df <- cbind(x, y)
     colnames(merged_df)[ncol(merged_df)] <- "y"
+    if(is.null(independent_variables)) {
     independent_variables <- setdiff(colnames(x), "Date")
+    } else {
+      independent_variables <- setdiff(independent_variables, "Date")
+    }
     dependent_variable <- "y"
   }
   independent_variables <- gsub(x = independent_variables, pattern = keep_pattern,

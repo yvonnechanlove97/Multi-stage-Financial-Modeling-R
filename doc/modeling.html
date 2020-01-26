@@ -470,6 +470,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <h2>Boosting Sequentially</h2>
 <div id="modeling-price-vs-daily-tweets" class="section level3">
 <h3>Modeling Price vs Daily Tweets</h3>
+<p><strong>First Stage Model</strong></p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1">pred_model_list1 &lt;-<span class="st"> </span><span class="kw">build_model</span>(<span class="dt">daily_price_df =</span> contractsForJuly2020,</a>
 <a class="sourceLine" id="cb13-2" title="2">                                <span class="dt">other_granularity_df =</span> tweet_df,</a>
 <a class="sourceLine" id="cb13-3" title="3">                                <span class="dt">daily_price_df_date_col =</span> <span class="st">&quot;Date&quot;</span>,</a>
@@ -494,6 +495,25 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 ##    -6.41109    -11.24353     26.93066</code></pre>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" title="1">train_pred_df &lt;-<span class="st"> </span>pred_model_list1<span class="op">$</span>train_pred_df</a>
 <a class="sourceLine" id="cb15-2" title="2">test_pred_df &lt;-<span class="st"> </span>pred_model_list1<span class="op">$</span>test_pred_df</a></code></pre></div>
+<p><strong>Boosting</strong></p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" title="1">y &lt;-<span class="st"> </span>train_pred_df<span class="op">$</span>residue</a>
+<a class="sourceLine" id="cb16-2" title="2">x &lt;-<span class="st"> </span><span class="kw">merge</span>(contractsForJuly2020[, <span class="kw">c</span>(<span class="st">&quot;Date&quot;</span>, <span class="st">&quot;july_2020_Close&quot;</span>)],</a>
+<a class="sourceLine" id="cb16-3" title="3">           soybeanWASDE_clean, <span class="dt">all.x =</span> T)</a>
+<a class="sourceLine" id="cb16-4" title="4">fill_cols &lt;-<span class="st"> </span><span class="kw">setdiff</span>(<span class="kw">colnames</span>(soybeanWASDE_clean), <span class="st">&quot;Date&quot;</span>)</a>
+<a class="sourceLine" id="cb16-5" title="5"><span class="co"># soybeanWASDE_clean[, fill_cols] &lt;- sapply(soybeanWASDE_clean[, fill_cols],</span></a>
+<a class="sourceLine" id="cb16-6" title="6"><span class="co">#                                           forward_fill_na)</span></a>
+<a class="sourceLine" id="cb16-7" title="7">test_x &lt;-<span class="st"> </span>x[<span class="dv">642</span><span class="op">:</span><span class="dv">671</span>, ]</a>
+<a class="sourceLine" id="cb16-8" title="8">x &lt;-<span class="st"> </span>x[<span class="dv">1</span><span class="op">:</span><span class="dv">641</span>, ]</a>
+<a class="sourceLine" id="cb16-9" title="9">test_y &lt;-<span class="st"> </span>test_pred_df<span class="op">$</span>residue</a>
+<a class="sourceLine" id="cb16-10" title="10"></a>
+<a class="sourceLine" id="cb16-11" title="11">pred_model_list2 &lt;-<span class="st"> </span><span class="kw">build_model</span>(<span class="dt">x =</span> x,</a>
+<a class="sourceLine" id="cb16-12" title="12">                                <span class="dt">y =</span> y,</a>
+<a class="sourceLine" id="cb16-13" title="13">                                <span class="dt">test_x =</span> test_x,</a>
+<a class="sourceLine" id="cb16-14" title="14">                                <span class="dt">test_y =</span> test_y,</a>
+<a class="sourceLine" id="cb16-15" title="15">                                <span class="dt">independent_variables =</span> <span class="kw">c</span>(<span class="st">&quot;Area Planted&quot;</span>),</a>
+<a class="sourceLine" id="cb16-16" title="16">                                <span class="dt">fill_missing_with_0 =</span> F,</a>
+<a class="sourceLine" id="cb16-17" title="17">                                <span class="dt">dependent_variable =</span> <span class="st">&quot;july_2020_Close&quot;</span>,</a>
+<a class="sourceLine" id="cb16-18" title="18">                                <span class="dt">lag =</span> <span class="dv">1</span>, <span class="dt">model_type =</span> <span class="st">&quot;lm&quot;</span>)</a></code></pre></div>
 </div>
 </div>
 </div>
