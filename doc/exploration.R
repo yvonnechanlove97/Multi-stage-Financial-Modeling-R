@@ -31,7 +31,7 @@ create_corr_plot(independent_var_names = c("china", "trade", "money",
                  dependent_var_names = "july_2020_Close",
                  df = price_tweet_dtm_df)
 
-## -----------------------------------------------------------------------------
+## ----fig.width=7, fig.height=4------------------------------------------------
 library(tm)
 library(wordcloud)
 library(slam)

@@ -77,7 +77,7 @@ create_corr_plot(independent_var_names = c("china", "trade", "money",
 
 ## Sentiment Wordcloud of Tweets
 
-```{r}
+```{r fig.width=7, fig.height=4}
 library(tm)
 library(wordcloud)
 library(slam)
