@@ -51,6 +51,44 @@ read_price <- function(in_file, delta_price = F, add_delta = F, subset = F,
   return(prices)
 }
 
+#' @title Read Export from CSV File
+#' @description Reads an CSV file with Date and export/sales to different countries
+#'
+#' @param file Path to a CSV file with export sales report
+#' @param skip_lines Number of lines to skip on top of the file
+#' @return Data frame with Date column and export/sales columns
+#' @examples
+#' price_df <- read_exports("")
+#' delta_price_df <- read_price(in_file, delta_price = T, subset = F, skip_lines = 3)
+#' @export
+
+read_exports <- function(file, skip_lines) {
+  df_export = read.csv(file,
+                       na.string = "",
+                       skip = skip_lines,
+                       stringsAsFactors = FALSE,
+                       header = FALSE)
+
+  df_export = remove_empty(df_export, which = c("rows"))
+  df_export = remove_empty(df_export, which = c("cols"))
+  df_export$V3 = NULL
+  colnames(df_export)[c(1:3,12)] = c(as.matrix(df_export[3,c(1:3,12)]))
+  colnames(df_export)[4:5] = apply(as.matrix(df_export[2:3,4:5]), 2, paste,
+                                   collapse = "_")
+  colnames(df_export)[6:11] = apply(as.matrix(df_export[1:3,6:11]), 2, paste,
+                                    collapse = "_")
+  df_export = df_export[-c(1:3),]
+  colnames(df_export) = gsub(" ", "_",colnames(df_export))
+  df_export$`Unit Desc` = NULL
+  df_export = cbind(df_export[1:3], lapply(df_export[4:11], FUN = function(x)
+    as.numeric(gsub(",","",x))))
+  rm_unk = which(df_export$Country == "UNKNOWN")
+  rm_knw = which(df_export$Country == "KNOWN")
+  rm_gt = which(df_export$Country == "GRAND TOTAL")
+  df_export = df_export[-c(rm_unk, rm_knw, rm_gt),]
+  return(df_export)
+}
+
 # get_features <- function(df, prices) {
 #   df <- merge(df, prices, by.x = "created_at", by.y = "Date")
 #   df <- df[, sapply(df, sd) != 0]

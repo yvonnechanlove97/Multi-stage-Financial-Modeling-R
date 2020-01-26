@@ -15,7 +15,8 @@ Imports:
     dplyr,
     readxl,
     corrplot,
-    rpart
+    rpart,
+    janitor
 Suggests: knitr, rmarkdown
 VignetteBuilder: knitr
 RoxygenNote: 7.0.2
