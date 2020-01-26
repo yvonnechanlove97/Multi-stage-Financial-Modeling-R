@@ -18,23 +18,13 @@ library(FinancialModelingR)
 ## Loading Commodity Futures Price
 
 ```{r}
-contractsForJuly2020 <- read_price(
-  in_file = "private_data/ActiveSoybeanContractsforJuly2020.xlsx", delta_price = T,
-  add_delta = T, subset = T, subset_min_date = "2017-01-01",
-  rename_price_columns = T, rename_prefix = "july_2020_", skip_lines = 3)
-contractsForJuly2020$Date <- as.Date(contractsForJuly2020$Date, "%Y-%m-%d")
+contractsForJuly2020 <- readRDS("preprocessed_data/contractsForJuly2020.Rds")
 ```
 
-## Daily Data: Preprocessing Tweets
+## Daily Data: Tweets
 
 ```{r}
-tweet_df <- readRDS("private_data/text_features.Rds")
-colnames(tweet_df)[1] <- "Date"
-sds <- sapply(tweet_df[, 2:ncol(tweet_df)], sd)
-remove_cols <- 1 + which(sds == 0)
-if(length(remove_cols) > 0) {
-  tweet_df <- tweet_df[, -remove_cols]
-}
+tweet_df <- readRDS("preprocessed_data/tweet_df.Rds")
 tweet_df$china.jobs <- apply(tweet_df[, 2:ncol(tweet_df)], 1, function(row) {
   return(as.integer((row["china"] * row["jobs"]) > 0))
 })

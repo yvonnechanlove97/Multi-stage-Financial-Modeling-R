@@ -1,34 +1,18 @@
 ## ----warning=F, message=F-----------------------------------------------------
 library(FinancialModelingR)
-data("soybeanCropProgressUSA2019", package = "FinancialModelingR")
-soybeanCropProgress2019$WEEK.ENDING <-
-  as.Date(soybeanCropProgress2019$WEEK.ENDING, "%Y-%m-%d")
-
-## ----fig.width=7, fig.height=4, warning=F, message=F--------------------------
-library(png)
-library(grid)
-img <- readPNG("private_data/july2020.PNG")
-grid.raster(img)
+soybeanCropProgress2019 <- readRDS("preprocessed_data/soybeanCropProgress2019.Rds")
 
 ## ----fig.width = 7, fig.height = 4--------------------------------------------
-contractsForJuly2020 <- read_price(
-  in_file = "private_data/ActiveSoybeanContractsforJuly2020.xlsx", delta_price = T,
-  add_delta = T, subset = T, subset_min_date = "2017-01-01",
-  rename_price_columns = T, rename_prefix = "july_2020_", skip_lines = 3)
-contractsForJuly2020$Date <- as.Date(contractsForJuly2020$Date, "%Y-%m-%d")
+contractsForJuly2020 <- readRDS("preprocessed_data/contractsForJuly2020.Rds")
 print(head(contractsForJuly2020))
-
-## ----fig.width=7, fig.height=4, warning=F, message=F--------------------------
-img <- readPNG("private_data/realdonaldtrump.PNG")
-grid.raster(img)
 
 ## -----------------------------------------------------------------------------
 # DTM = document term matrix
-tweet_dtm_df <- readRDS("private_data/text_features.Rds")
+tweet_dtm_df <- readRDS("preprocessed_data/tweet_df.Rds")
 print(head(tweet_dtm_df))
 price_tweet_dtm_df <- merge(tweet_dtm_df,
                             contractsForJuly2020[, c("Date", "july_2020_Close")],
-                            by.x = "created_at", by.y = "Date")
+                            by = "Date")
 
 ## ----fig.width = 7, fig.height = 4--------------------------------------------
 create_corr_plot(independent_var_names = NULL,
@@ -36,7 +20,7 @@ create_corr_plot(independent_var_names = NULL,
                  df = price_tweet_dtm_df,
                  remove_cols = c("amp", "get", "want", "many", "will", "just",
                                  "want", "can", "realdonaldtrump", "created_at",
-                                 "made", "going", "must", "make"))
+                                 "made", "going", "must", "make", "Date"))
 
 price_tweet_dtm_df$china_jobs <- apply(price_tweet_dtm_df[, -1], 1, function(row) {
   as.integer((row["china"] * row["jobs"]) != 0)
@@ -47,23 +31,14 @@ create_corr_plot(independent_var_names = c("china", "trade", "money",
                  dependent_var_names = "july_2020_Close",
                  df = price_tweet_dtm_df)
 
-## ----fig.width = 7, fig.height = 4, warning = F-------------------------------
+## ----fig.width = 7, fig.height = 4, warning = F, message=F--------------------
 plot_price_vs_weekly_series(df1_progress = soybeanCropProgress2019,
                             df2_contracts = contractsForJuly2020) +
   labs(title = "Crop_progress_19 vs March Contract price")
 
 ## ----fig.width = 7, fig.height = 4--------------------------------------------
-library(dplyr)
-data("soybeanExports", package = "FinancialModelingR")
-competitors <- c("ARGENTINA", "BRAZIL")
-df_total_export <- soybeanExports %>% group_by(Country) %>%
-  summarize(Total_Export = sum(Weekly_Exports, na.rm = T))
-top_countries <- head(x = df_total_export$Country[
-  order(df_total_export$Total_Export, decreasing = TRUE)], n = 10)
-selected_countries <- c(competitors, top_countries)
-df_top_export <- soybeanExports[sapply(
-  soybeanExports$Country, function(country) country %in% selected_countries), ]
-df_top_export <- inner_join(contractsForJuly2020, df_top_export, by = "Date")
+df_top_export <- readRDS("preprocessed_data/top_10_export_countries.Rds")
+df_top_export <- merge(contractsForJuly2020, df_top_export, by = "Date")
 ind_col <- c("Weekly_Exports", "CMY_Outstanding_Sales", "CMY_Gross_New_Sales",
              "CMY_Net_Sales" ,"CMY_Total_Commitment")
 corr_mat_weekly <- create_corr_plot(
@@ -71,12 +46,11 @@ corr_mat_weekly <- create_corr_plot(
   dependent_var_names = colnames(df_top_export)[
     grep("Close",colnames(df_top_export))],
   df = df_top_export,
-  selected_countries = selected_countries,
+  selected_countries = unique(df_top_export$Country),
   country_var = "Country",
   remove_countries = c("GRAND TOTAL", "KNOWN"))
 
 ## ----fig.width=7, fig.height=4------------------------------------------------
-data("soybeanCombinedWASDE")
-soybeanWASDE_clean <- clean_wasde(combined_data = soybeanCombinedWASDE)
+soybeanWASDE_clean <- readRDS("preprocessed_data/soybeanWASDE_clean.Rds")
 plot_monthly_data(soybeanWASDE_clean)
 
