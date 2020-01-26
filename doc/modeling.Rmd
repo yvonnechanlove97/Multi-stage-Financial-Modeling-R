@@ -1,0 +1,109 @@
+---
+title: "Modeling using FinancialModelingR"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Modeling using FinancialModelingR package}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+# Initialization
+
+## Loading Libraries
+
+```{r}
+library(FinancialModelingR)
+```
+
+## Loading Commodity Futures Price
+
+```{r}
+contractsForJuly2020 <- read_price(
+  in_file = "private_data/ActiveSoybeanContractsforJuly2020.xlsx", delta_price = T,
+  add_delta = T, subset = T, subset_min_date = "2017-01-01",
+  rename_price_columns = T, rename_prefix = "july_2020_", skip_lines = 3)
+contractsForJuly2020$Date <- as.Date(contractsForJuly2020$Date, "%Y-%m-%d")
+```
+
+## Daily Data: Preprocessing Tweets
+
+```{r}
+tweet_df <- readRDS("private_data/text_features.Rds")
+colnames(tweet_df)[1] <- "Date"
+sds <- sapply(tweet_df[, 2:ncol(tweet_df)], sd)
+remove_cols <- 1 + which(sds == 0)
+if(length(remove_cols) > 0) {
+  tweet_df <- tweet_df[, -remove_cols]
+}
+tweet_df$china.jobs <- apply(tweet_df[, 2:ncol(tweet_df)], 1, function(row) {
+  return(as.integer((row["china"] * row["jobs"]) > 0))
+})
+tweet_df <- data.frame(tweet_df)
+print(head(tweet_df))
+```
+
+## Weekly Data: Preprocessing (Soybean) Exports
+
+```{r warning=F, message=F}
+library(dplyr)
+data("soybeanExports", package = "FinancialModelingR")
+competitors <- c("ARGENTINA", "BRAZIL")
+df_total_export <- soybeanExports %>% group_by(Country) %>%
+  summarize(Total_Export = sum(Weekly_Exports, na.rm = T))
+top_countries <- head(x = df_total_export$Country[
+  order(df_total_export$Total_Export, decreasing = TRUE)], n = 5)
+selected_countries <- c(competitors, top_countries)
+df_top_export <- soybeanExports[sapply(
+  soybeanExports$Country, function(country) country %in% selected_countries), ]
+```
+
+## Monthly Data: Preprocessing (Soybean) WASDE
+
+```{r}
+data("soybeanCombinedWASDE")
+soybeanWASDE_clean <- clean_wasde(combined_data = soybeanCombinedWASDE)
+```
+
+# Modeling
+
+A sequentially boosted machine learning model can be built using `FinancialModelingR` package. The user has the option to choose the type of machine learning model to be built at each stage of boosting. Examples show how the package can be used for modeling close price with the following:
+
+- Merging with monthly data directly
+- Sequentially boosting with daily data, weekly data and monthly data in the given order
+
+## Daily Price + Monthly Data
+
+```{r}
+pred_model_list <- build_model(daily_price_df = contractsForJuly2020,
+                               other_granularity_df = soybeanWASDE_clean,
+                               daily_price_df_date_col = "Date",
+                               other_granularity_df_date_col = "Date",
+                               independent_variables = "Area Planted",
+                               dependent_variable = "july_2020_Close",
+                               lag = 1, model_type = "lm")
+print(pred_model_list$model)
+print(head(pred_model_list$train_pred_df))
+print(head(pred_model_list$test_pred_df))
+```
+
+## Boosting Sequentially
+
+### Modeling Price vs Daily Tweets
+
+```{r}
+pred_model_list1 <- build_model(daily_price_df = contractsForJuly2020,
+                                other_granularity_df = tweet_df,
+                                daily_price_df_date_col = "Date",
+                                other_granularity_df_date_col = "Date",
+                                independent_variables = c("china", "trade",
+                                                          "money", "deal",
+                                                          "tariffs", "economy",
+                                                          "currency",
+                                                          "china.jobs"),
+                                fill_missing_with_0 = TRUE,
+                                dependent_variable = "july_2020_Close",
+                                lag = 1, model_type = "lm")
+print(pred_model_list1$model)
+train_pred_df <- pred_model_list1$train_pred_df
+test_pred_df <- pred_model_list1$test_pred_df
+```
