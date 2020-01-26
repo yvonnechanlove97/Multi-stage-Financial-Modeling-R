@@ -51,7 +51,7 @@ img <- readPNG("private_data/realdonaldtrump.PNG")
 grid.raster(img)
 ```
 
-This section uses document term matrix (DTM) created from Excel file containing tweets. The DTM is aggregated in daily level.
+This section uses document term matrix (DTM) created from Excel file containing tweets. Structure of the raw input file is shown above. The DTM is aggregated in daily level.
 
 ```{r}
 tweet_df <- readRDS("private_data/text_features.Rds")
@@ -64,7 +64,28 @@ if(length(remove_cols) > 0) {
 saveRDS(tweet_df, "preprocessed_data/tweet_df.Rds")
 ```
 
-# Export Sales Report *Rework*
+# Export Sales Report
+
+## Raw Exports Data
+
+Structure of a typical raw export sales report is shown below:
+
+```{r fig.width=7, fig.height=4}
+library(png)
+library(grid)
+img <- readPNG("private_data/exports.PNG")
+grid.raster(img)
+```
+
+## Preprocessing Raw Exports Data
+
+```{r}
+library(janitor)
+soybeanExports = read_exports(
+  file = "raw_data/ExportSalesDataByCommodity(Soybeans).csv", skip_lines = 4)
+```
+
+## From `FinancialModelingR`
 
 ```{r}
 library(dplyr)

@@ -27,6 +27,17 @@ if(length(remove_cols) > 0) {
 }
 saveRDS(tweet_df, "preprocessed_data/tweet_df.Rds")
 
+## ----fig.width=7, fig.height=4------------------------------------------------
+library(png)
+library(grid)
+img <- readPNG("private_data/exports.PNG")
+grid.raster(img)
+
+## -----------------------------------------------------------------------------
+library(janitor)
+soybeanExports = read_exports(
+  file = "raw_data/ExportSalesDataByCommodity(Soybeans).csv", skip_lines = 4)
+
 ## -----------------------------------------------------------------------------
 library(dplyr)
 data("soybeanExports", package = "FinancialModelingR")
