@@ -75,6 +75,16 @@ create_corr_plot(independent_var_names = c("china", "trade", "money",
                  df = price_tweet_dtm_df)
 ```
 
+## Sentiment Wordcloud of Tweets
+
+```{r}
+library(tm)
+library(wordcloud)
+library(slam)
+df1 <- readRDS("raw_data/Tweets/unprocessed_China tweets @realDonaldTrump.csv.Rds")
+plot_wordcloud(df1)
+```
+
 ## Weekly Data
 
 ### Soybean Crop Progress Example

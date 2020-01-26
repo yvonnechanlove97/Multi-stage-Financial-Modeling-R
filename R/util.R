@@ -58,8 +58,7 @@ read_price <- function(in_file, delta_price = F, add_delta = F, subset = F,
 #' @param skip_lines Number of lines to skip on top of the file
 #' @return Data frame with Date column and export/sales columns
 #' @examples
-#' price_df <- read_exports("")
-#' delta_price_df <- read_price(in_file, delta_price = T, subset = F, skip_lines = 3)
+#' price_df <- read_exports("raw_data/ExportSalesDataByCommodity(Soybeans).csv", skip_lines = 4)
 #' @export
 
 read_exports <- function(file, skip_lines) {

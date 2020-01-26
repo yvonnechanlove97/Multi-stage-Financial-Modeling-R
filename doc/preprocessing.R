@@ -14,8 +14,37 @@ contractsForJuly2020$Date <- as.Date(contractsForJuly2020$Date, "%Y-%m-%d")
 saveRDS(contractsForJuly2020, "preprocessed_data/contractsForJuly2020.Rds")
 
 ## ----fig.width=7, fig.height=4, warning=F, message=F--------------------------
-img <- readPNG("private_data/realdonaldtrump.PNG")
+img <- readPNG("private_data/tweets.PNG")
 grid.raster(img)
+
+## ----warning=F, message=F-----------------------------------------------------
+library(data.table)
+library(tm)
+library(plyr)
+library(dplyr)
+library(qdap)
+
+wd <- getwd()
+setwd("raw_data/Tweets/")
+tweet_files <- list.files(pattern = "\\.csv$")
+for(file in tweet_files) {
+  for(processed in c("unprocessed")) {
+    process_text(file = file, processed = processed)
+  }
+}
+setwd(wd)
+
+## ----warning=F, message=F-----------------------------------------------------
+tweet_df <- data.frame(fread("raw_data/Tweets/China tweets @realDonaldTrump.csv"))
+df1 <- data.frame(fread("raw_data/Tweets/FarmerTweets @realDonaldTrump.csv"))
+tweet_df <- rbind(tweet_df, df1)
+df1 <-  data.frame(fread("raw_data/Tweets/soybeans tweets @realDonaldTrump.csv"))
+tweet_df <- rbind(tweet_df, df1)
+dtm <- get_dtm(text = tweet_df$text, thr = 50)
+tweet_df <- cbind(data.frame(created_at = tweet_df$created_at), dtm)
+tweet_df$created_at <- as.Date(tweet_df$created_at, format = "%m-%d-%Y")
+tweet_df <- tweet_df[!is.na(tweet_df$created_at), ]
+tweet_df <- tweet_df %>% group_by(created_at) %>% summarize_all(sum)
 
 ## -----------------------------------------------------------------------------
 tweet_df <- readRDS("private_data/text_features.Rds")

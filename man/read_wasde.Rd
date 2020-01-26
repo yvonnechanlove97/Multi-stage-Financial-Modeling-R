@@ -2,7 +2,7 @@
 % Please edit documentation in R/wasde_util.R
 \name{read_wasde}
 \alias{read_wasde}
-\title{Read in WASDE soybean data}
+\title{Read in WASDE data}
 \usage{
 read_wasde(
   path,
@@ -24,7 +24,7 @@ read_wasde(
 Data frame of the combined data for required commodity (example: soybeans, corn)
 }
 \description{
-Extract only soybean data from WASDE reports and combine the data
+Extract only crop specific WASDE reports across multiple WASDE files in a folder
 }
 \examples{
 data=read_wasde(path="raw_data/WASDE")

@@ -31,6 +31,13 @@ create_corr_plot(independent_var_names = c("china", "trade", "money",
                  dependent_var_names = "july_2020_Close",
                  df = price_tweet_dtm_df)
 
+## -----------------------------------------------------------------------------
+library(tm)
+library(wordcloud)
+library(slam)
+df1 <- readRDS("raw_data/Tweets/unprocessed_China tweets @realDonaldTrump.csv.Rds")
+plot_wordcloud(df1)
+
 ## ----fig.width = 7, fig.height = 4, warning = F, message=F--------------------
 plot_price_vs_weekly_series(df1_progress = soybeanCropProgress2019,
                             df2_contracts = contractsForJuly2020) +

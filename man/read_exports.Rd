@@ -18,6 +18,5 @@ Data frame with Date column and export/sales columns
 Reads an CSV file with Date and export/sales to different countries
 }
 \examples{
-price_df <- read_exports("")
-delta_price_df <- read_price(in_file, delta_price = T, subset = F, skip_lines = 3)
+price_df <- read_exports("raw_data/ExportSalesDataByCommodity(Soybeans).csv", skip_lines = 4)
 }

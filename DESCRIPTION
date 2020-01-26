@@ -16,7 +16,12 @@ Imports:
     readxl,
     corrplot,
     rpart,
-    janitor
+    janitor,
+    cleanNLP,
+    data.table,
+    plyr,
+    qdap,
+    reticulate
 Suggests: knitr, rmarkdown
 VignetteBuilder: knitr
 RoxygenNote: 7.0.2

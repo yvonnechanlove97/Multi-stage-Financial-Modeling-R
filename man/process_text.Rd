@@ -2,30 +2,23 @@
 % Please edit documentation in R/text_preprocessing.R
 \name{process_text}
 \alias{process_text}
-\title{Process Tweet Text}
+\title{Preprocess Tweets}
 \usage{
-process_text(
-  file,
-  processed = "processed",
-  csv_dir = "../Shane_s_lab/Data_Graduate/",
-  stopwords_file = "../../Naveen_NLP/stopwords.txt"
-)
+process_text(file, processed = "processed", stopwords_file = NULL)
 }
 \arguments{
-\item{file}{Path to a csv file with Tweets}
+\item{file}{Location of Tweet CSV file}
 
-\item{processed}{Prefix of the processed Rds file}
+\item{processed}{Parameter in c("processed", "unprocessed"). Performs cleaning based on part-of-speech and dependencies using spaCy and extracts sentiments if this is set to "processed". Otherwise it directly extracts sentiments on the whole Tweet}
 
-\item{csv_dir}{Base directory of CSV file}
-
-\item{stopwords_file}{Location of text file containing stopwords}
+\item{stopwords_file}{Text file containing stopwords - one in each line}
 }
 \value{
-A data frame with summary of polarity of text Tweets such as average polarity of sentences, minimum (most negative) polarity of sentences, maximum (most positive) polarity of sentences, standard deviation of polarity of sentences and useful text in the Tweet obtained by retaining nouns, adjectives and adverbs.
+Data frame with sentiment summary of each Tweet in text file
 }
 \description{
-Creates a data frame with Tweet summaries such as average polarity of sentences, minimum (most negative) polarity of sentences, maximum (most positive) polarity of sentences, standard deviation of polarity of sentences (returns 0 if ther number of sentences is 1) and useful text in the Tweet obtained by retaining nouns, adjectives and adverbs.
+Read and preprocess standard Tweet input CSV file
 }
 \examples{
-process_text(file = "", processed = "processed", csv_dir = "../Shane_s_lab/Data_Graduate/", stopwords_file = "../../Naveen_NLP/stopwords.txt")
+df = process_text(path="raw_data/Tweets/China tweets @realDonaldTrump.csv")
 }
