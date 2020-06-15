@@ -1,5 +1,5 @@
 #' @title Read in WASDE data
-#' @description Extract only crop specific WASDE reports across multiple WASDE files in a folder
+#' @description Extract only specific part of WASDE reports across multiple WASDE files in a folder
 #'
 #' @param path Folder containing only all the Excel WASDE reports with proper file names
 #' @param sheet_name Name of the sheet (string) with the required crop data
